@@ -1,0 +1,17 @@
+Package: mmre
+Type: Package
+Title: Two state Markov models with individual level random effects
+Version: 0.0.1
+Date: 2018-05-11
+Author: Charlotte M. Jones-Todd <cmjonestodd@gmail.com>
+Maintainer: Charlotte M. Jones-Todd <cmjonestodd@gmail.com>
+Description: Two state Markov models with individual level random effects
+License: GPL
+LazyData: true
+Depends:
+    R(>= 3.5.0),
+    TMB,
+    Rcpp (>= 0.11.5),
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
