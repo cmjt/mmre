@@ -57,6 +57,9 @@ Type objective_function<Type>::operator() (){
   PARAMETER_MATRIX(betas_matrix); // the coefficients for the covariates for transition 1->2 and 2->1
   PARAMETER(log_sig_u); // the sd for individual MVN random effect u
   Type sig_u = exp(log_sig_u);
+  Type q12 = exp(betas_matrix(0,0)); Type q21 = exp(betas_matrix(1,0));
+  Type b1_12 = betas_matrix(0,1); Type b1_21 = betas_matrix(1,1);
+  Type b2_12 = -exp(betas_matrix(0,2)); Type b2_21 = -exp(betas_matrix(1,2));
   // Declaring random effects
   PARAMETER_MATRIX(u);
   int wh =  NLEVELS(ID); // number of whales
@@ -79,13 +82,11 @@ Type objective_function<Type>::operator() (){
     vector<Type> tem = times(j);
     vector<Type> sem = states(j); // times, states,
     vector<Type> covs = covariates(j); //covariates
-    vector<Type> beta0 = betas_matrix.row(0); // transiions 1--2
-    vector<Type> beta1 = betas_matrix.row(1); // transitions 2--1
     int t = tem.size();
       for (int i = 0; i < (t-1); i++){
 	// MVN latent variables u for each individual j
-	q(0) = exp(beta0(0) + beta0(1)*exp(-exp(beta0(2))*covs(i)) + u(j,0));
-	q(1) = exp(beta1(0) + beta1(1)*exp(-exp(beta1(2))*covs(i)) + u(j,1));
+	q(0) = exp(log(q12) + b1_12*exp(b2_12*covs(i)) + u(j,0));
+	q(1) = exp(log(q21) + b1_21*exp(b2_21*covs(i)) + u(j,1));
 	Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
       	Type temp = tem(i+1) - tem(i);
 	int x = CppAD::Integer(sem(i));
@@ -95,17 +96,11 @@ Type objective_function<Type>::operator() (){
 	Type p = P(x-1,y-1);
 	ll += log(p);
       }
-      vector<Type> q0(2); // declare q0
-      q0(0) = exp(beta0(0)); q0(1) = exp(beta1(0));
-      vector<Type> beta_1(2);
-      beta_1(0) = beta0(1); beta_1(1) = beta1(1);
-      vector<Type> beta_2(2);
-      beta_2(0) = -exp(beta0(2)); beta_2(1) = -exp(beta1(2));
-      ADREPORT(q0);
-      ADREPORT(beta_1);
-      ADREPORT(beta_2);
       ll -=  MVNORM(sigma_u_mat)(u.row(j)); // MVNORM returns negative-log of the density
   }
+  ADREPORT(q12); ADREPORT(q21);
+  ADREPORT(b1_12); ADREPORT(b1_21);
+  ADREPORT(b2_12); ADREPORT(b2_21);
   ADREPORT(sig_u);
   return -ll;
 }
