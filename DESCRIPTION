@@ -15,5 +15,7 @@ Depends:
 Suggests:
     testthat,
     spatstat,
-    maptools	
+    maptools,
+    mvtnorm,
+    expm		
 RoxygenNote: 6.0.1
