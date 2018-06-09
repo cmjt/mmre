@@ -106,7 +106,8 @@ setGeneric("ll",
 setMethod("ll",
           c(fit = "mmre"),
           function(fit){
-              nll <- fit@fit$fn(fit@sdreport[,1])
+              pars <- rbind(get.params(fit, FALSE),get.params(fit, TRUE))[,1]
+              nll <- fit@fit$fn(pars)
               -nll
           }
           )
