@@ -13,5 +13,9 @@ Depends:
     TMB,
     Rcpp (>= 0.11.5),
 Suggests:
-    testthat
-RoxygenNote: 5.0.1
+    testthat,
+    spatstat,
+    maptools,
+    mvtnorm,
+    expm		
+RoxygenNote: 6.0.1
