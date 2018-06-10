@@ -6,7 +6,7 @@
 given by beta0 + beta1*exp(beta2*cov) + individual.random.effect
 Number simulated will correspond to length of given times and covariates.}
 \usage{
-sim.mmre.decay(par.sim, cov, times, ID, start.state, log_sig_u)
+sim.mmre.decay(par.sim, cov, times, ID, start.state, log_sig_u, fit)
 }
 \arguments{
 \item{par.sim}{a 2 by three matrix of parameters. Each row coresponds to the off diagonal transition intensities.
@@ -21,6 +21,8 @@ Each column corresponds to the covariates.}
 \item{start.state}{numeric initial state (can only be 1 or 2)}
 
 \item{log_sig_u}{numeric log sigma for the mvn effect}
+
+\item{fit}{a mmre fit object, either supplied or all other armugents}
 }
 \description{
 Function to simulate Matrkov transition model where transition intensities are
