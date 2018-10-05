@@ -9,4 +9,3 @@ dll.mmre()
 \description{
 Loads required DLLs for \code{fit.mmre}
 }
-
