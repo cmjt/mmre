@@ -43,7 +43,8 @@ setMethod("trans.matrix",
                tt <- table( c(x[,-ncol(x)]), c(x[,-1]) )
                if(prob) tt <- tt / rowSums(tt)
                res <- matrix(tt,ncol = ncol(tt),byrow = FALSE)
-               colnames(res) <- rownames(res) <- attributes(tt)$dimnames[[1]]
+               rownames(res) <- attributes(tt)$dimnames[[1]]
+               colnames(res) <- attributes(tt)$dimnames[[2]]
                return(res)
           }
           )
