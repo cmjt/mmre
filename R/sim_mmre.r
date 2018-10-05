@@ -8,15 +8,16 @@
 #' @param start.state numeric initial state (can only be 1 or 2)
 #' @param log_sig_u numeric log sigma for the mvn effect
 #' @param cov a vector of covariate values
+#' @param fit a mmre fit object, either supplied or all other armugents
 #' @export
 setGeneric("sim.mmre.decay",
-           function(par.sim , cov, times, ID, start.state, log_sig_u){
+           function(par.sim , cov, times, ID, start.state, log_sig_u, fit){
                standardGeneric("sim.mmre.decay")
            })
 
 setMethod("sim.mmre.decay",
-          c("matrix","numeric","numeric","character", "numeric","numeric"),
-          function(par.sim , cov, times, ID, start.state, log_sig_u){
+          c("matrix","numeric","numeric","character", "numeric","numeric","missing"),
+          function(par.sim , cov, times, ID, start.state, log_sig_u,fit){
               n <- length(table(ID))
               ids <- names(table(ID))
               mvn <- mvtnorm::rmvnorm(n,mean = rep(0,2), sigma = diag(rep(exp(log_sig_u)^2,2))) ## zero mean mvn
@@ -46,5 +47,15 @@ setMethod("sim.mmre.decay",
               res <- data.frame(times = times ,state = states, ID = ID,cov = cov)
               names(res) <- c("time", "state","ID","cov")
               return(list(sim = res, mvn = mvn))
+          }
+          )
+setMethod("sim.mmre.decay",
+         c("missing","missing","missing","missing","missing","missing","mmre"),
+          function(par.sim , cov, times, ID, start.state, log_sig_u,fit){
+              sim <- sim.mmre.decay(par.sim = fit@parameters$betas_matrix,
+                                    cov = fit@data[,fit@cov_names], times = fit@data$time,
+                                    ID = as.character(fit@data$ID) , start.state = fit@data$state[1],
+                                    log_sig_u = fit@parameters$log_sig_u)
+              return(sim)
           }
           )

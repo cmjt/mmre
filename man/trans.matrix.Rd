@@ -14,3 +14,4 @@ trans.matrix(x, prob)
 \description{
 Function to get transition matrix
 }
+

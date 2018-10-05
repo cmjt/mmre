@@ -9,7 +9,7 @@ Description: Two state Markov models with individual level random effects
 License: GPL
 LazyData: true
 Depends:
-    R(>= 3.5.0),
+    R(>= 3.4.0),
     TMB,
     Rcpp (>= 0.11.5),
 Suggests:
@@ -17,5 +17,5 @@ Suggests:
     spatstat,
     maptools,
     mvtnorm,
-    expm		
-RoxygenNote: 6.0.1
+    expm
+RoxygenNote: 5.0.1
