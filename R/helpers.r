@@ -195,9 +195,15 @@ setMethod("lr.test",
 
 
 #' Imports
+#' @importFrom sp SpatialPolygons Polygons proj4string as SpatialPolygonsDataFrame
 #' @importFrom spatstat inside.owin as.owin
-#' #' @importFrom stats optim rlnorm rnorm
+#' @importFrom msm msm
+#' @importFrom ggmap get_map ggmap
+#' @importFrom ggplo2 fortify geom_polygon aes geom_path geom_point geom_histogram ylab ggplot xlab xlim ylim annotation_custom layer_scales annotate scale_colour_manual geom_polygon geom_raster geom_contour coord_map geom_line geom_rect scale_x_discrete theme
+#' @importFrom gridExtra tableGrob grid.arrange
+#' @importFrom RColorBrewer brewer.pal.info brewer.pal
+#' @importFrom stats optim rlnorm rnorm
 #' @importFrom expm expm
 #' @importFrom mvtnorm mvnorm
-#' @import TMB Rcpp 
+#' @import TMB Rcpp maptools
 #' @useDynLib mmre
