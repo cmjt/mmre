@@ -1,4 +1,4 @@
-#' finds if  estimated locations are on or off range
+#' Function to find if  estimated locations are on or off range
 #' @param x a data frame of locations object
 #' @param range a SpatialPolygonDataFrame of the range
 #' @return a logical vector indicating if successive locations were on or off range
@@ -13,8 +13,8 @@ setGeneric("onrange",
 setMethod("onrange",
           c(x = "data.frame",range = "SpatialPolygonsDataFrame"),
           function(x,range){
-              locs <- data.frame(lon = x$longitude, lat = x$latitude)
-              on = inside.owin(locs$lon,locs$lat,as.owin(range))
+              locs = data.frame(lon = x$longitude, lat = x$latitude)
+              on = spatstat::inside.owin(locs$lon,locs$lat,maptools::as.owin.SpatialPolygons(range))
               on
           }
           )
@@ -22,8 +22,8 @@ setMethod("onrange",
 setMethod("onrange",
           c(x = "data.frame",range = "SpatialPolygons"),
           function(x,range){
-              locs <- data.frame(x = x$x, y = x$y)
-              on = inside.owin(locs$x,locs$y,as.owin(range))
+              locs = data.frame(x = x$x, y = x$y)
+              on = spatstat::inside.owin(locs$x,locs$y,maptools::as.owin.SpatialPolygons(range))
               on
           }
           )
@@ -196,14 +196,15 @@ setMethod("lr.test",
 
 #' Imports
 #' @importFrom sp SpatialPolygons Polygons proj4string as SpatialPolygonsDataFrame
-#' @importFrom spatstat inside.owin as.owin
+#' @importFrom spatstat inside.owin
 #' @importFrom msm msm
 #' @importFrom ggmap get_map ggmap
-#' @importFrom ggplo2 fortify geom_polygon aes geom_path geom_point geom_histogram ylab ggplot xlab xlim ylim annotation_custom layer_scales annotate scale_colour_manual geom_polygon geom_raster geom_contour coord_map geom_line geom_rect scale_x_discrete theme
+#' @importFrom ggplo2 fortify geom_polygon aes geom_path geom_point geom_histogram ylab ggplot xlab xlim ylim annotation_custom layer_scales annotate scale_colour_manual geom_polygon geom_raster geom_contour coord_map geom_line geom_rect scale_x_discrete theme element_text
 #' @importFrom gridExtra tableGrob grid.arrange
 #' @importFrom RColorBrewer brewer.pal.info brewer.pal
 #' @importFrom stats optim rlnorm rnorm
 #' @importFrom expm expm
 #' @importFrom mvtnorm mvnorm
-#' @import TMB Rcpp maptools
+#' @importFrom maptools as.owin.SpatialPolygons
+#' @import TMB Rcpp 
 #' @useDynLib mmre

@@ -20,10 +20,11 @@ setMethod("map",
           c(x = "SpatialPolygonsDataFrame",zoom = "numeric"),
           function(x,zoom) {
               centre = rowMeans(x@bbox)
-              map = get_map(centre,zoom = zoom, maptype = "hybrid", source = "google")
-              map = ggmap(map)
-              p = fortify(x)
-              map = map + ggplot2::geom_polygon(aes(x=long, y=lat, group=group), fill='grey', size=2,color='black', data=p, alpha=0)
+              map = ggmap::get_map(centre,zoom = zoom, maptype = "hybrid", source = "google")
+              map = ggmap::ggmap(map)
+              p = ggplot2::fortify(x)
+              map = map + ggplot2::geom_polygon(ggplot2::aes(x=long, y=lat, group = group),
+                                                fill='grey', size=2,color='black', data=p, alpha=0)
               map
           }
           )
@@ -35,9 +36,9 @@ setMethod("map",
           function(x,zoom) {
               lonlat <- data.frame(longitude = x$longitude, latitude = x$latitude)
               centre = colMeans(lonlat)
-              map = get_map(centre,zoom = zoom, maptype = "hybrid", source = "google")
-              map = ggmap(map)
-              map = map + ggplot2::geom_point(aes(x=longitude, y=latitude), data=lonlat)
+              map = ggmap::get_map(centre,zoom = zoom, maptype = "hybrid", source = "google")
+              map = ggmap::ggmap(map)
+              map = map + ggplot2::geom_point(ggplot2::aes(x=longitude, y=latitude), data=lonlat)
               map
           }
           )
@@ -59,8 +60,10 @@ setMethod("hist.time",
           c(t = "POSIXct"),
           function(t){
              dates = data.frame(Date = as.Date(t))
-             ggplot(dates ,aes(x=Date))+ geom_histogram(binwidth=1, colour="white") +ylab("Frequency of transmissions") +
-                 xlab("Month and Day")
+             ggplot2::ggplot(dates ,ggplot2::aes(x=Date)) +
+                 ggplot2::geom_histogram(binwidth=1, colour="white") +
+                     ggplot2::ylab("Frequency of transmissions") +
+                     ggplot2::xlab("Month and Day")
           }
           )
 
@@ -78,18 +81,21 @@ setGeneric("show.all",
 setMethod("show.all",
           c(x = "data.frame",range = "SpatialPolygonsDataFrame"),
           function(x,range){
-              p <- fortify(range)
+              p <- ggplot2::fortify(range)
               n1 <- grep("lat",names(x))[1]
               n2 <- grep("lon",names(x))[1]
               l <- data.frame(long = x[,n2],lat = x[,n1],TagID = x$TagID)
               n <- length(table(l$TagID))
-              qual_col_pals <- brewer.pal.info[brewer.pal.info$category == 'qual',]
-              col_vector <- unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
-              ggplot(aes(x = long,y = lat,group = TagID, colour = TagID), data = l) +
-                  geom_path(aes(x = long,y = lat),size = 0.2, data = l) +
-                  geom_point(aes(x = long,y = lat), data = l)  +
-                  scale_colour_manual(values = col_vector) +
-                  geom_polygon(aes(x=long, y=lat, group=group), fill='grey', size=2,color='black', data=p, alpha=0)
+              qual_col_pals <- RColorBrewer::brewer.pal.info[RColorBrewer::brewer.pal.info$category == 'qual',]
+              col_vector <- unlist(mapply(RColorBrewer::brewer.pal,
+                                          qual_col_pals$maxcolors, rownames(qual_col_pals)))
+              ggplot2::ggplot(ggplot2::aes(x = long,y = lat,group = TagID, colour = TagID),
+                              data = l) +
+                  ggplot2::geom_path(ggplot2::aes(x = long,y = lat),size = 0.2, data = l) +
+                  ggplot2::geom_point(ggplot2::aes(x = long,y = lat), data = l)  +
+                  ggplot2::scale_colour_manual(values = col_vector) +
+                  ggplot2::geom_polygon(ggplot2::aes(x=long, y=lat, group = group),
+                                        fill='grey', size=2,color='black', data=p, alpha=0)
           }
           )
 #' Function to show duration of exposure data
@@ -114,12 +120,15 @@ setMethod("show.duration",
               levels(x$event) <- 1:length(table(x$event))
               x$event <- as.numeric(as.character(x$event))
               
-              plot <- ggplot(x, aes(day, Start)) + geom_rect(aes(ymin = Start, ymax = End,
-                                                                   xmin = (day - 0.45) + event/10,
-                                                                   xmax = (day - 0.35) + event/10,
-                                                                   fill = Type))+
-                  scale_x_discrete("Date",labels = as.POSIXct(unique(x$date)),limits = 1:length(table(x$day))) +
-                  ylab("Duration") + theme(axis.text.x=element_text(angle=90,hjust=1))
+              plot <- ggplot2::ggplot(x, ggplot2::aes(day, Start)) +
+                  ggplot2::geom_rect(ggplot2::aes(ymin = Start, ymax = End,
+                                         xmin = (day - 0.45) + event/10,
+                                         xmax = (day - 0.35) + event/10,
+                                         fill = Type))+
+                  ggplot2::scale_x_discrete("Date",labels = as.POSIXct(unique(x$date)),
+                                   limits = 1:length(table(x$day))) +
+                  ggplot2::ylab("Duration") +
+                  ggplot2::theme(axis.text.x = ggplot2::element_text(angle=90,hjust=1))
               return(plot)
           }
           )
@@ -131,7 +140,7 @@ setMethod("show.duration",
 #' 
 setGeneric("show.random",
            function(fit){
-               standaredGeneric("show.random")
+               standardGeneric("show.random")
            })
 setMethod("show.random",
           c(fit = "mmre"),
@@ -145,7 +154,8 @@ setMethod("show.random",
                    ylim = ran,main = "Individual random effects")
               lines(us[(n+1):(2*n),1],col = "grey")
               points(us[(n+1):(2*n),1],pch = 20,col = "grey")
-              legend("topright",col = c("black","grey"),pch = 20,lty = 1, legend = c("q 1->2","q 2->1"),bty = "n")
+              legend("topright",col = c("black","grey"),pch = 20,lty = 1,
+                     legend = c("q 1->2","q 2->1"),bty = "n")
               axis(1,at = 1:n,labels = as.factor(fit@summary$IDs),cex.axis = 0.7)
               abline(h=0,lwd = 2,lty = 2)
           }
@@ -157,11 +167,11 @@ setMethod("show.random",
 #' @export
 setGeneric("show.probs",
            function(fit, time){
-               standaredGeneric("show.probs")
+               standardGeneric("show.probs")
            })
 setMethod("show.probs",
           c(fit = "mmre", time = "numeric"),
-          show.probs <- function(fit, time){
+          function(fit, time){
               off.on = on.off = numeric(length(time))
               for(i in 1:length(time)){
                   gp = get.probs(fit, t = time[i])
@@ -174,3 +184,4 @@ setMethod("show.probs",
               legend("topleft", lty = c(2,3), legend = c("1--2","2--1"), bty = "n")
           }
           )
+
