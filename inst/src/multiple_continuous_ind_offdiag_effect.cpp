@@ -53,6 +53,8 @@ Type objective_function<Type>::operator() (){
   DATA_STRUCT(times, time_list); //an array of times for each whale
   DATA_STRUCT(covariates, covariate_list); //an array covriate matricies for each whale refering to each spline
   vector<Type> q(2); // declare q
+  PARAMETER_VECTOR(log_b0);//a vector of the log off diagonal transition intensities to be estimated using ML
+  vector<Type> b0 = exp(log_b0); // declare intercept "q"
   PARAMETER_MATRIX(betas_matrix); // the coefficients for the covariates for transition 1->2 and 2->1
   int wh =  NLEVELS(ID); // number of whales
   Type ll = 0; //declare log-likelihood
@@ -64,13 +66,15 @@ Type objective_function<Type>::operator() (){
     vector<Type> sem = states(j); // times, states,
     vector<Type> beta0 = betas_matrix.row(0);
     vector<Type> beta1 = betas_matrix.row(1);
-    vector<Type> covariates0 = covariates(j)*beta0;
-    vector<Type> covariates1 = covariates(j)*beta1;
+    vector<Type> beta0_log = log(beta0);
+    vector<Type> beta1_log = log(beta1);
+    vector<Type> covariates0 = covariates(j)*beta0_log;
+    vector<Type> covariates1 = covariates(j)*beta1_log;
     int t = tem.size();
       for (int i = 0; i < (t-1); i++){
 	// MVN latent variables u for each individual j
-	q(0) = exp(covariates0(i));
-	q(1) = exp(covariates1(i));
+	q(0) = exp(b0(0) + covariates0(i));
+	q(1) = exp(b0(1) + covariates1(i));
 	Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
       	Type temp = tem(i+1) - tem(i);
 	int x = CppAD::Integer(sem(i));
@@ -81,5 +85,6 @@ Type objective_function<Type>::operator() (){
 	ll += log(p);
       }
   }
+  ADREPORT(Q)
   return -ll;
 }
