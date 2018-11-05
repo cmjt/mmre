@@ -4,7 +4,7 @@
 \alias{get.mmre.data}
 \title{Function to combine argumets and data into a \code{mmre} object for using \code{fit.mmre}}
 \usage{
-get.mmre.data(data, parameters, cov.names)
+get.mmre.data(data, parameters, cov.names, decay)
 }
 \arguments{
 \item{data}{a \code{mmre} object}
@@ -14,6 +14,8 @@ this list (i.e., to fit a correlated random effect model \code{parameters} must 
 \code{log_sig_u} and \code{cov_par})}
 
 \item{cov.names}{a charater string or vector of covariate names (elements in \code{data}) (only for multiple individuals)}
+
+\item{decay}{logical decay formulation to be used or not}
 }
 \description{
 Function to combine argumets and data into a \code{mmre} object for using \code{fit.mmre}
