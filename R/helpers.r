@@ -27,6 +27,60 @@ setMethod("onrange",
               on
           }
           )
+#' Function to change a SpatialLinesDataFrame to a SpatialPolygonsDataFrame
+#' @details This function is based on code found in the book Applied Spaatial Data
+#' Analysis with R, 2nd edition, Roger S. Bivand, Edzer J. Pebesma and V. Gomez-Rubio
+#' UseR! Series, Springer New York (section 2.6 pp 41)
+#' @param x An object of class SpatialLinesDataFrame
+#' @return A SpatialPolygonsDataFrame
+
+setGeneric("sl2sp",
+           function(x){
+               standardGeneric("sl2sp")
+           })
+setMethod("sl2sp",
+          c(x = "SpatialLinesDataFrame"),
+            function(x) {
+                lns <- slot(x,"lines")
+                if(sum(table(sapply(lns,function(y)length(slot(y,"Lines")))))> 1) {
+                    i <- sapply(lns,function(y) {
+                        crds <- slot(slot(y,"Lines")[[1]],"coords")
+                        identical(crds[1,],crds[nrow(crds),])
+                    })
+                    i2 <- x[i]
+                    list_of_Lines <- slot(i2,"lines")
+                    sp <- SpatialPolygons(lapply(list_of_Lines, function(y) {
+                        Polygons(list(Polygon(slot(slot(y,"Lines")[[1]],
+                                                   "coords"))),ID = slot(y,"ID"))
+                    }), proj4string = CRS(proj4string(x)))
+                }else{
+                    sp <- SpatialPolygons(lapply(lns, function(y) {
+                        Polygons(list(Polygon(slot(slot(y,"Lines")[[1]],
+                                                   "coords"))),ID = slot(y,"ID"))
+                    }), proj4string = CRS(proj4string(x)))
+                }
+                spdf <- as(sp, "SpatialPolygonsDataFrame")
+                return(spdf)
+            })
+#' Function to make a SpatialPolygonsDataFrame from a matrix of points
+#' @param points a 2 column matrix of points. The last point should be equal to the first
+#' @param name a character name for the SPDF
+
+setGeneric("coords2spdf",
+           function(points, name){
+               standardGeneric("coords2spdf")
+           })
+
+setMethod("coords2spdf",
+          c(points = "matrix", name = "character"),
+          function(points,name){
+              p <- Polygon(points)
+              polys <- SpatialPolygons(list(
+                  Polygons(list(p), name)))
+              res <- as(polys, "SpatialPolygonsDataFrame")
+              return(res)
+          }
+          )
 
 #' calculates a sequence matrix from consecutive TRUE/FALSE vector
 #' @param x a logical vector of consecutive occurances
