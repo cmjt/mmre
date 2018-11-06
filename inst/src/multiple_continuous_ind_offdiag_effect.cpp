@@ -54,7 +54,7 @@ Type objective_function<Type>::operator() (){
   DATA_STRUCT(covariates, covariate_list); //an array covriate matricies for each whale refering to each spline
   vector<Type> q(2); // declare q
   PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition baselines
-  vector<Type> baseline = exp(log_baseline); // declare intercept "q"
+  vector<Type> baseline = exp(log_baseline); // declare intercept
   PARAMETER_MATRIX(betas_matrix); // the coefficients for the covariates for transition 1->2 and 2->1
   vector<Type> log_coef1_2 = betas_matrix.row(0);
   vector<Type> log_coef2_1 = betas_matrix.row(1);
