@@ -105,7 +105,7 @@ mmre.mod <- function(mmre.data = NULL){
     RE <- ifelse("u"%in% par_names,TRUE, FALSE)
     cov <- ifelse(!("none"%in%mmre.data@cov_names),TRUE,FALSE)
     betmat <- ifelse("betas_matrix"%in%par_names,TRUE,FALSE)
-    fixed <- !"decay"%in%mmre.data@decay
+    fixed <- !mmre.data@decay
     if(!RE & !cov  & !betmat){
         mod_chosen <- "multiple_continuous"
     }
