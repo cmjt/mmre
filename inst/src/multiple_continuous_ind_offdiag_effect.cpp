@@ -71,8 +71,8 @@ Type objective_function<Type>::operator() (){
     vector<Type> covariates2_1 = covariates(j)*log_coef2_1;
     int t = tem.size();
       for (int i = 0; i < (t-1); i++){
-	q(0) = exp(log_baseline(0) + covariates1_2(i));
-        q(1) = exp(log_baseline(1) + covariates2_1(i));
+	q(0) = baseline(0)*exp(covariates1_2(i));
+        q(1) = baseline(1)*exp(covariates2_1(i));
 	Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
       	Type temp = tem(i+1) - tem(i);
 	int x = CppAD::Integer(sem(i));
