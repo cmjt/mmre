@@ -14,4 +14,3 @@ get.params(fit, random)
 \description{
 Function to extract either the fixed or random parameters from model
 }
-

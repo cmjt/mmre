@@ -17,4 +17,3 @@ a logical vector indicating if successive locations were on or off range
 \description{
 finds if  estimated locations are on or off range
 }
-
