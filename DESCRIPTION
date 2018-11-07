@@ -18,4 +18,8 @@ Suggests:
     maptools,
     mvtnorm,
     expm
+<<<<<<< HEAD
 RoxygenNote: 6.1.0
+=======
+RoxygenNote: 6.0.1
+>>>>>>> 1d7d148fe3f2085c462597951525f182d30289b4

@@ -32,6 +32,7 @@ mmre <- setClass("mmre",
                            fit_data = "list",
                            fitted = "character",
                            cov_names = "character",
+                           decay = "logical",
                            parameters = "list",
                            fit = "list",
                            sdreport = "matrix"),
@@ -68,11 +69,13 @@ mmre.summary <- function(data){
 #' this list (i.e., to fit a correlated random effect model \code{parameters} must contain the elements \code{u},
 #' \code{log_sig_u} and \code{cov_par})
 #' @param cov.names a charater string or vector of covariate names (elements in \code{data}) (only for multiple individuals)
-get.mmre.data <- function(data, parameters, cov.names){
+#' @param decay logical decay formulation to be used or not
+get.mmre.data <- function(data, parameters, cov.names,decay){
     obj <- mmre(data = data)
     obj@summary <-  mmre.summary(obj@data)
     obj@parameters <- parameters
     obj@cov_names <- cov.names
+    obj@decay <- decay
     n <- obj@summary$Number
     if(n > 1) {
         states <- split(obj@data$state,obj@data$ID)
@@ -102,17 +105,21 @@ mmre.mod <- function(mmre.data = NULL){
     RE <- ifelse("u"%in% par_names,TRUE, FALSE)
     cov <- ifelse(!("none"%in%mmre.data@cov_names),TRUE,FALSE)
     betmat <- ifelse("betas_matrix"%in%par_names,TRUE,FALSE)
+    fixed <- !mmre.data@decay
     if(!RE & !cov  & !betmat){
         mod_chosen <- "multiple_continuous"
     }
     if(RE & !cov & !betmat){
         mod_chosen <- "multiple_continuous_independentRE"
     }
-    if(RE & cov & betmat){
+    if(RE & cov & betmat & !fixed){
         mod_chosen <- "multiple_continuous_indRE_offdiag_decay"
     }
-    if(!RE & cov & betmat){
+    if(!RE & cov & betmat & !fixed){
         mod_chosen <- "multiple_continuous_offdiag_decay"
+    }
+    if(!RE & cov & betmat & fixed){
+        mod_chosen <- "multiple_continuous_ind_offdiag_effect"
     }
     return(mod_chosen)
 }
@@ -120,8 +127,8 @@ mmre.mod <- function(mmre.data = NULL){
 #' Function to fit two state Markov model
 #' @inheritParams get.mmre.data
 #' @export
-fit.mmre <- function(data = NULL, parameters, cov.names = "none"){
-    get_mmre <- get.mmre.data(data = data, parameters = parameters, cov.names = cov.names)
+fit.mmre <- function(data = NULL, parameters, cov.names = "none",decay = FALSE){
+    get_mmre <- get.mmre.data(data = data, parameters = parameters, cov.names = cov.names, decay = decay)
     mmre_mod <- mmre.mod(get_mmre)
     print(mmre_mod)
     get_mmre@fitted <- mmre_mod

@@ -1,4 +1,4 @@
-#' finds if  estimated locations are on or off range
+#' Function to find if  estimated locations are on or off range
 #' @param x a data frame of locations object
 #' @param range a SpatialPolygonDataFrame of the range
 #' @return a logical vector indicating if successive locations were on or off range
@@ -13,8 +13,8 @@ setGeneric("onrange",
 setMethod("onrange",
           c(x = "data.frame",range = "SpatialPolygonsDataFrame"),
           function(x,range){
-              locs <- data.frame(lon = x$longitude, lat = x$latitude)
-              on = inside.owin(locs$lon,locs$lat,as.owin(range))
+              locs = data.frame(lon = x$longitude, lat = x$latitude)
+              on = spatstat::inside.owin(locs$lon,locs$lat,maptools::as.owin.SpatialPolygons(range))
               on
           }
           )
@@ -22,9 +22,63 @@ setMethod("onrange",
 setMethod("onrange",
           c(x = "data.frame",range = "SpatialPolygons"),
           function(x,range){
-              locs <- data.frame(x = x$x, y = x$y)
-              on = inside.owin(locs$x,locs$y,as.owin(range))
+              locs = data.frame(x = x$x, y = x$y)
+              on = spatstat::inside.owin(locs$x,locs$y,maptools::as.owin.SpatialPolygons(range))
               on
+          }
+          )
+#' Function to change a SpatialLinesDataFrame to a SpatialPolygonsDataFrame
+#' @details This function is based on code found in the book Applied Spaatial Data
+#' Analysis with R, 2nd edition, Roger S. Bivand, Edzer J. Pebesma and V. Gomez-Rubio
+#' UseR! Series, Springer New York (section 2.6 pp 41)
+#' @param x An object of class SpatialLinesDataFrame
+#' @return A SpatialPolygonsDataFrame
+
+setGeneric("sl2sp",
+           function(x){
+               standardGeneric("sl2sp")
+           })
+setMethod("sl2sp",
+          c(x = "SpatialLinesDataFrame"),
+            function(x) {
+                lns <- slot(x,"lines")
+                if(sum(table(sapply(lns,function(y)length(slot(y,"Lines")))))> 1) {
+                    i <- sapply(lns,function(y) {
+                        crds <- slot(slot(y,"Lines")[[1]],"coords")
+                        identical(crds[1,],crds[nrow(crds),])
+                    })
+                    i2 <- x[i]
+                    list_of_Lines <- slot(i2,"lines")
+                    sp <- SpatialPolygons(lapply(list_of_Lines, function(y) {
+                        Polygons(list(Polygon(slot(slot(y,"Lines")[[1]],
+                                                   "coords"))),ID = slot(y,"ID"))
+                    }), proj4string = CRS(proj4string(x)))
+                }else{
+                    sp <- SpatialPolygons(lapply(lns, function(y) {
+                        Polygons(list(Polygon(slot(slot(y,"Lines")[[1]],
+                                                   "coords"))),ID = slot(y,"ID"))
+                    }), proj4string = CRS(proj4string(x)))
+                }
+                spdf <- as(sp, "SpatialPolygonsDataFrame")
+                return(spdf)
+            })
+#' Function to make a SpatialPolygonsDataFrame from a matrix of points
+#' @param points a 2 column matrix of points. The last point should be equal to the first
+#' @param name a character name for the SPDF
+
+setGeneric("coords2spdf",
+           function(points, name){
+               standardGeneric("coords2spdf")
+           })
+
+setMethod("coords2spdf",
+          c(points = "matrix", name = "character"),
+          function(points,name){
+              p <- Polygon(points)
+              polys <- SpatialPolygons(list(
+                  Polygons(list(p), name)))
+              res <- as(polys, "SpatialPolygonsDataFrame")
+              return(res)
           }
           )
 
@@ -43,7 +97,7 @@ setMethod("seqMat",
                FF <- length(which(x[1:(length(x)-1)]=="FALSE"&x[2:(length(x))]=="FALSE"))
                FT <- length(which(x[1:(length(x)-1)]=="FALSE"&x[2:(length(x))]=="TRUE"))
                mat <- matrix(c(FF,FT,TF,TT),ncol = 2,byrow = TRUE)
-               colnames(mat) <- rownames(mat) <- c("Outside","Inside")
+               colnames(mat) <- rownames(mat) <- c("FALSE","TRUE")
                return(prop.table(mat,margin = 1))
           }
           )
@@ -92,7 +146,8 @@ setMethod("trans.matrix",
                tt <- table( c(x[,-ncol(x)]), c(x[,-1]) )
                if(prob) tt <- tt / rowSums(tt)
                res <- matrix(tt,ncol = ncol(tt),byrow = FALSE)
-               colnames(res) <- rownames(res) <- attributes(tt)$dimnames[[1]]
+               rownames(res) <- attributes(tt)$dimnames[[1]]
+               colnames(res) <- attributes(tt)$dimnames[[2]]
                return(res)
           }
           )
@@ -194,9 +249,16 @@ setMethod("lr.test",
 
 
 #' Imports
-#' @importFrom spatstat inside.owin as.owin
-#' #' @importFrom stats optim rlnorm rnorm
+#' @importFrom sp SpatialPolygons Polygons proj4string as SpatialPolygonsDataFrame
+#' @importFrom spatstat inside.owin
+#' @importFrom msm msm
+#' @importFrom ggmap get_map ggmap
+#' @importFrom ggplo2 fortify geom_polygon aes geom_path geom_point geom_histogram ylab ggplot xlab xlim ylim annotation_custom layer_scales annotate scale_colour_manual geom_polygon geom_raster geom_contour coord_map geom_line geom_rect scale_x_discrete theme element_text
+#' @importFrom gridExtra tableGrob grid.arrange
+#' @importFrom RColorBrewer brewer.pal.info brewer.pal
+#' @importFrom stats optim rlnorm rnorm
 #' @importFrom expm expm
 #' @importFrom mvtnorm mvnorm
+#' @importFrom maptools as.owin.SpatialPolygons
 #' @import TMB Rcpp 
 #' @useDynLib mmre

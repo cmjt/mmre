@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.r
 \name{onrange}
 \alias{onrange}
-\title{finds if  estimated locations are on or off range}
+\title{Function to find if  estimated locations are on or off range}
 \usage{
 onrange(x, range)
 }
@@ -15,5 +15,5 @@ onrange(x, range)
 a logical vector indicating if successive locations were on or off range
 }
 \description{
-finds if  estimated locations are on or off range
+Function to find if  estimated locations are on or off range
 }
