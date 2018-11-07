@@ -97,7 +97,7 @@ setMethod("seqMat",
                FF <- length(which(x[1:(length(x)-1)]=="FALSE"&x[2:(length(x))]=="FALSE"))
                FT <- length(which(x[1:(length(x)-1)]=="FALSE"&x[2:(length(x))]=="TRUE"))
                mat <- matrix(c(FF,FT,TF,TT),ncol = 2,byrow = TRUE)
-               colnames(mat) <- rownames(mat) <- c("Outside","Inside")
+               colnames(mat) <- rownames(mat) <- c("FALSE","TRUE")
                return(prop.table(mat,margin = 1))
           }
           )
