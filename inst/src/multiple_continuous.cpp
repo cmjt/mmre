@@ -37,8 +37,8 @@ Type objective_function<Type>::operator() (){
   DATA_FACTOR(ID);
   DATA_STRUCT(states, state_list); //an array of numeric states (i.e., in whale example 1s and 2s) for each whale
   DATA_STRUCT(times, time_list); //an array of times for each whale
-  PARAMETER_VECTOR(log_q);//a vector of the log off diagonal transition intensities to be estimated using ML
-  vector<Type> q = exp(log_q); // declare q
+  PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition intensities to be estimated using ML
+  vector<Type> q = exp(log_baseline); // declare q
   int wh =  NLEVELS(ID); // number of whales
   vector<Type> ll(wh);
   matrix<Type> Q(2,2);

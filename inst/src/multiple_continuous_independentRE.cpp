@@ -40,10 +40,9 @@ Type objective_function<Type>::operator() (){
   DATA_FACTOR(ID);
   DATA_STRUCT(states, state_list); //an array of numeric states (i.e., in whale example 1s and 2s) for each whale
   DATA_STRUCT(times, time_list); //an array of times for each whale
-  PARAMETER_VECTOR(log_q);//a vector of the log off diagonal transition intensities to be estimated using ML
+  PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition intensities to be estimated using ML
+  vector<Type> baseline = exp(log_baseline); // declare baseline
   vector<Type> q(2); // declare q
-  PARAMETER(log_sig_u); // the sd for individual MVN random effect u (currently independent)
-  Type sig_u = exp(log_sig_u);
   // Declaring random effects
   PARAMETER_MATRIX(u);
   int wh =  NLEVELS(ID); // number of whales
@@ -54,8 +53,8 @@ Type objective_function<Type>::operator() (){
     vector<Type> tem = times(j);
     vector<Type> sem = states(j);
     // MVN latent variables u for each individual j
-    q(0) = exp(log_q(0) + u(j,0));
-    q(1) = exp(log_q(1) + u(j,1));
+    q(0) = exp(log_baseline(0) + u(j,0));
+    q(1) = exp(log_baseline(1) + u(j,1));
     Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
     int t = tem.size();
       for (int i = 0; i < (t-1); i++){
@@ -67,10 +66,9 @@ Type objective_function<Type>::operator() (){
 	Type p = P(x-1,y-1);
 	ll += log(p);
       }
-      ll += dnorm(u(j,0), Type(0), sig_u,true); // contribution from 1--2 transition for individual j
-      ll += dnorm(u(j,1), Type(0), sig_u,true); // contribution from 2--1 transition for individual j
+      ll += dnorm(u(j,0), Type(0), Type(1),true); // contribution from 1--2 transition for individual j
+      ll += dnorm(u(j,1), Type(0), Type(1),true); // contribution from 2--1 transition for individual j
   }
-  ADREPORT(Q);
-  ADREPORT(sig_u);
+  ADREPORT(baseline);
   return -ll;
 }
