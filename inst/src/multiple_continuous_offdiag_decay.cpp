@@ -57,7 +57,8 @@ Type objective_function<Type>::operator() (){
   PARAMETER_MATRIX(betas_matrix); // the coefficients for the covariates for transition 1->2 and 2->1
   Type log_b1_12 = betas_matrix(0,0); Type log_b1_21 = betas_matrix(1,0);
   Type coef1_12 = exp(log_b1_12);Type coef1_21 = exp(log_b1_21);
-  Type b2_12 = -exp(betas_matrix(0,1)); Type b2_21 = -exp(betas_matrix(1,1));
+  Type log_b2_12 = betas_matrix(0,1); Type log_b2_21 = betas_matrix(1,1);
+  Type coef2_12 = exp(log_b2_12);Type coef2_21 = exp(log_b2_21);
   int wh =  NLEVELS(ID); // number of whales
   Type ll = 0; //declare log-likelihood
   matrix<Type> Q(2,2); // declare transition matrix
@@ -72,8 +73,8 @@ Type objective_function<Type>::operator() (){
 	  q(0) = exp(log_baseline(0) + log_b1_12);
 	  q(1) = exp(log_baseline(1) + log_b1_21);
 	}else{
-	  q(0) = exp(log_baseline(0) + b2_12*covs(i));
-	  q(1) = exp(log_baseline(1) + b2_21*covs(i));
+	  q(0) = exp(log_baseline(0) + log_b2_12*covs(i));
+	  q(1) = exp(log_baseline(1) + log_b2_21*covs(i));
 	}
 	Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
       	Type temp = tem(i+1) - tem(i);
@@ -87,6 +88,6 @@ Type objective_function<Type>::operator() (){
   }
   ADREPORT(baseline);
   ADREPORT(coef1_12); ADREPORT(coef1_21);
-  ADREPORT(b2_12); ADREPORT(b2_21);
+  ADREPORT(coef2_12); ADREPORT(coef2_21);
   return -ll;
 }
