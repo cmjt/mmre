@@ -5,11 +5,11 @@
 using namespace Eigen;
 using namespace density;
 
-// Templates for fitting a two state Markov model to multiple individuals with a single covariate
-//  Form of each offdiagonal transition matirix is beta0 + beta_1 * exp(beta_2*cov) +
+// Templates for fitting a two state Markov model to multiple individuals with decay formulation
+// Form of each offdiagonal transition matirix is beta0 + beta_1 * exp(beta_2*cov) 
 
 // state_list, time_list, and covariate_list (of length one) are all templates that read a list in from R of
-// states, times, and covariates respectively for
+// states, times, and matricies of covariates respectively for
 // use by the objective function defined below.
 // Each element of these lists refers to one individual.
 
@@ -54,11 +54,10 @@ Type objective_function<Type>::operator() (){
   vector<Type> q(2); // declare q
   PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition baselines
   vector<Type> baseline = exp(log_baseline); // declare intercept
-  PARAMETER_MATRIX(betas_matrix); // the coefficients for the covariates for transition 1->2 and 2->1
-  Type log_b1_12 = betas_matrix(0,0); Type log_b1_21 = betas_matrix(1,0);
-  Type coef1_12 = exp(log_b1_12);Type coef1_21 = exp(log_b1_21);
-  Type log_b2_12 = betas_matrix(0,1); Type log_b2_21 = betas_matrix(1,1);
-  Type coef2_12 = exp(log_b2_12);Type coef2_21 = exp(log_b2_21);
+  PARAMETER_MATRIX(betas_matrix); // coefficients for the intensity jump and exp decay
+  Type logb1_12 = betas_matrix(0,1); Type logb1_21 = betas_matrix(1,1);
+  Type b1_12 = exp(logb1_12); Type b1_21 = exp(logb1_21);
+  Type b2_12 = -exp(betas_matrix(0,2)); Type b2_21 = -exp(betas_matrix(1,2));
   int wh =  NLEVELS(ID); // number of whales
   Type ll = 0; //declare log-likelihood
   matrix<Type> Q(2,2); // declare transition matrix
@@ -69,13 +68,9 @@ Type objective_function<Type>::operator() (){
     vector<Type> covs = covariates(j); //covariates
     int t = tem.size();
       for (int i = 0; i < (t-1); i++){
-	if(covs(i) == 0){
-	  q(0) = exp(log_baseline(0) + log_b1_12);
-	  q(1) = exp(log_baseline(1) + log_b1_21);
-	}else{
-	  q(0) = exp(log_baseline(0) + log_b2_12*covs(i));
-	  q(1) = exp(log_baseline(1) + log_b2_21*covs(i));
-	}
+	// MVN latent variables u for each individual j
+	q(0) = exp(log_baseline(0) + logb1_12*exp(b2_12*covs(i)));
+	q(1) = exp(log_baseline(1) + logb1_21*exp(b2_21*covs(i)));
 	Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
       	Type temp = tem(i+1) - tem(i);
 	int x = CppAD::Integer(sem(i));
@@ -84,10 +79,8 @@ Type objective_function<Type>::operator() (){
       	matrix<Type> P = atomic::expm(Qt); // Prob transition matrix
 	Type p = P(x-1,y-1);
 	ll += log(p);
-      }  
+      }
   }
-  ADREPORT(baseline);
-  ADREPORT(coef1_12); ADREPORT(coef1_21);
-  ADREPORT(coef2_12); ADREPORT(coef2_21);
+  ADREPORT(baseline); ADREPORT(b1_12); ADREPORT(b1_21);
   return -ll;
 }
