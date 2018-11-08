@@ -81,6 +81,6 @@ Type objective_function<Type>::operator() (){
 	ll += log(p);
       }
   }
-  ADREPORT(baseline); ADREPORT(b1_12); ADREPORT(b1_21);
+  ADREPORT(baseline); ADREPORT(b1_12); ADREPORT(b1_21); ADREPORT(b2_12); ADREPORT(b2_21);
   return -ll;
 }
