@@ -55,9 +55,9 @@ Type objective_function<Type>::operator() (){
   PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition baselines
   vector<Type> baseline = exp(log_baseline); // declare intercept
   PARAMETER_MATRIX(betas_matrix); // coefficients for the intensity jump and exp decay
-  Type logb1_12 = betas_matrix(0,1); Type logb1_21 = betas_matrix(1,1);
+  Type logb1_12 = betas_matrix(0,0); Type logb1_21 = betas_matrix(1,0);
   Type b1_12 = exp(logb1_12); Type b1_21 = exp(logb1_21);
-  Type b2_12 = -exp(betas_matrix(0,2)); Type b2_21 = -exp(betas_matrix(1,2));
+  Type b2_12 = -exp(betas_matrix(0,1)); Type b2_21 = -exp(betas_matrix(1,1));
   // Declaring random effects
   PARAMETER_MATRIX(u);
   int wh =  NLEVELS(ID); // number of whales
