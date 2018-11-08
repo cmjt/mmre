@@ -70,7 +70,7 @@ mmre.summary <- function(data){
 #' \code{log_sig_u} and \code{cov_par})
 #' @param cov.names a charater string or vector of covariate names (elements in \code{data}) (only for multiple individuals)
 #' @param decay logical decay formulation to be used or not
-get.mmre.data <- function(data, parameters, cov.names,decay){
+get.mmre.data <- function(data, parameters, cov.names = "none",decay = FALSE, truncation = NULL){
     obj <- mmre(data = data)
     obj@summary <-  mmre.summary(obj@data)
     obj@parameters <- parameters
@@ -95,6 +95,7 @@ get.mmre.data <- function(data, parameters, cov.names,decay){
         }
         obj@fit_data$response$covariates <- covs
     }
+    if(!is.null(truncation)){obj@fit_data$response$truncation <- truncation}
     return(obj)
 }
 
@@ -106,20 +107,34 @@ mmre.mod <- function(mmre.data = NULL){
     cov <- ifelse(!("none"%in%mmre.data@cov_names),TRUE,FALSE)
     betmat <- ifelse("betas_matrix"%in%par_names,TRUE,FALSE)
     fixed <- !mmre.data@decay
-    if(!RE & !cov  & !betmat){
+    trunc <- !is.null(mmre.data@fit_data$response$truncation)
+    if(!cov & betmat){stop("Please include covariate names to match parameter matrix")}
+    if(cov & !betmat){stop("Please include parameter matrix of covariate statring values")}
+    if(!cov & !betmat & trunc){stop("Cannot truncate a missing covariate")}
+    if(trunc & !fixed){stop("Please shoose either decay or truncated")}
+    if(!RE & !cov  & !betmat & !trunc){
         mod_chosen <- "multiple_continuous"
     }
-    if(RE & !cov & !betmat){
+    if(RE & !cov & !betmat & !trunc){
         mod_chosen <- "multiple_continuous_independentRE"
     }
-    if(RE & cov & betmat & !fixed){
-        mod_chosen <- "multiple_continuous_indRE_offdiag_decay"
+    if(RE & cov & betmat & !fixed & !trunc){
+        mod_chosen <- "multiple_continuous_offdiag_decay_independentRE"
     }
-    if(!RE & cov & betmat & !fixed){
+    if(!RE & cov & betmat & !fixed & !trunc){
         mod_chosen <- "multiple_continuous_offdiag_decay"
     }
-    if(!RE & cov & betmat & fixed){
-        mod_chosen <- "multiple_continuous_ind_offdiag_effect"
+    if(!RE & cov & betmat & fixed & !trunc){
+        mod_chosen <- "multiple_continuous_offdiag"
+    }
+    if(RE & cov & betmat & fixed & !trunc){
+        mod_chosen <- "multiple_continuous_offdiag_independentRE"
+    }
+    if(!RE & cov & betmat & fixed & trunc){
+        mod_chosen <- "multiple_continuous_offdiag_truncated"
+    }
+    if(RE & cov & betmat & fixed & trunc){
+        mod_chosen <- "multiple_continuous_offdiag_truncated_independentRE"
     }
     return(mod_chosen)
 }
@@ -127,8 +142,8 @@ mmre.mod <- function(mmre.data = NULL){
 #' Function to fit two state Markov model
 #' @inheritParams get.mmre.data
 #' @export
-fit.mmre <- function(data = NULL, parameters, cov.names = "none",decay = FALSE){
-    get_mmre <- get.mmre.data(data = data, parameters = parameters, cov.names = cov.names, decay = decay)
+fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE, truncation = NULL){
+    get_mmre <- get.mmre.data(data = data, parameters = parameters, cov.names = cov.names, decay = decay, truncation = truncation)
     mmre_mod <- mmre.mod(get_mmre)
     print(mmre_mod)
     get_mmre@fitted <- mmre_mod
