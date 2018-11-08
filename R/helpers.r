@@ -179,8 +179,7 @@ setGeneric("get.probs",
 setMethod("get.probs",
           c(fit = "mmre", t = "numeric"),
           function(fit,t){
-              idx <- which(rownames(fit@sdreport) == "log_q")
-              if(length(idx)==0){stop("no yet implemented for model with covariates")}
+              idx <- which(rownames(fit@sdreport) == "log_baseline")
               qs <- fit@sdreport[idx,1]
               q2p(exp(qs),t)
           }
