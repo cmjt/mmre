@@ -142,7 +142,7 @@ setMethod("sim.mmre.offdiag",
          c("missing","missing","missing","missing","missing","missing","mmre"),
           function(par.sim , cov, times, ID, start.state,random, fit){
               random <- "u"%in%names(fit@parameters)
-              sim <- sim.mmre.offdiag(par.sim = get.params(fit,FALSE),
+              sim <- sim.mmre.offdiag(par.sim = matrix(get.params(fit,FALSE)[,1],ncol = 2),
                                     cov = fit@data[,fit@cov_names], times = fit@data$time,
                                     ID = as.character(fit@data$ID) , start.state = fit@data$state[1],
                                     random = random)
@@ -317,7 +317,7 @@ setMethod("sim.mmre.trunc",
          c("missing","missing","missing","missing","missing","missing","missing","mmre"),
           function(par.sim , cov, times, ID, start.state,trunc, fit){
               random <- "u"%in%names(fit@parameters)
-              sim <- sim.mmre.trunc(par.sim = get.params(fit,FALSE),
+              sim <- sim.mmre.trunc(par.sim = matrix(get.params(fit,FALSE)[,1],ncol = 2),
                                     cov = fit@data[,fit@cov_names], times = fit@data$time,
                                     ID = as.character(fit@data$ID) , start.state = fit@data$state[1],
                                     random = random, trunc = fit@fit_data$response$truncation)
