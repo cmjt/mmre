@@ -96,7 +96,7 @@ Type objective_function<Type>::operator() (){
       ll += dnorm(u(j,0), Type(0), Type(1),true); // contribution from 1--2 transition for individual j
       ll += dnorm(u(j,1), Type(0), Type(1),true); // contribution from 2--1 transition for individual j
   }
-  ADREPORT(baseline);
+  ADREPORT(Q);
   ADREPORT(coef1_12); ADREPORT(coef1_21);
   ADREPORT(coef2_12); ADREPORT(coef2_21);
   return -ll;

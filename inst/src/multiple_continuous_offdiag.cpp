@@ -83,6 +83,6 @@ Type objective_function<Type>::operator() (){
 	ll += log(p);
       }
   }
-  ADREPORT(baseline);ADREPORT(coef1_2);ADREPORT(coef2_1);// HR and baseline coefs
+  ADREPORT(Q);ADREPORT(coef1_2);ADREPORT(coef2_1);// HR and baseline coefs
   return -ll;
 }

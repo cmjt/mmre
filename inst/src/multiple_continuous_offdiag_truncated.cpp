@@ -92,7 +92,7 @@ Type objective_function<Type>::operator() (){
 	ll += log(p);
       }  
   }
-  ADREPORT(baseline);
+  ADREPORT(Q);
   ADREPORT(coef1_12); ADREPORT(coef1_21);
   ADREPORT(coef2_12); ADREPORT(coef2_21);
   return -ll;
