@@ -179,9 +179,11 @@ setGeneric("get.probs",
 setMethod("get.probs",
           c(fit = "mmre", t = "numeric"),
           function(fit,t){
+              paste("Probability transition matrix at baseline with t = ",t)
               idx <- which(rownames(fit@sdreport) == "log_baseline")
               qs <- fit@sdreport[idx,1]
-              q2p(exp(qs),t)
+              res <- q2p(exp(qs),t)
+              colnames(res) <- rownames(res) <- c("State 1","State 2")
           }
           )
 
@@ -199,9 +201,9 @@ setMethod("get.params",
           c(fit = "mmre", random = "logical"),
           function(fit,random){
               if(!random){
-                  idx <- which(!(names(fit@parameters)%in%c("u","log_sig_u", "cov_par")))
+                  idx <- which(!(names(fit@parameters)%in%c("u")))
               }else{
-                  idx <- which(names(fit@parameters)%in%c("u","log_sig_u", "cov_par"))
+                  idx <- which(names(fit@parameters)%in%c("u"))
               }
               nam <- names(fit@parameters)[idx]
               idx <- which(rownames(fit@sdreport)%in%nam)
@@ -245,7 +247,48 @@ setMethod("lr.test",
              cat(paste("H0: no altervnative effect. Pvalue = ",pval),"\n")
          }
          )
-
+#' Coefficient method for mmre model
+#' @export
+setGeneric("get.coefs",
+           function(object){
+               standardGeneric("get.coefs")
+           }
+           )
+setMethod("get.coefs",signature(object = "mmre"),function(object){
+    q <- object@sdreport[rownames(object@sdreport) == "Q",]
+    nms <- c("State 1 - State 1","State 2 - State 1","State 1 - State 2","State 2 - State 2")
+    rownames(q) <- nms
+    res <- list()
+    res$baseline_transition_matrix <- q
+    if(object@fitted == "multiple_continuous_offdiag" |
+       object@fitted == "multiple_continuous_offdiag_independentRE"){
+        ests <- get.params(object,FALSE)[-c(1,2),]
+        nms <- paste(rep(c("State 2 - State 1","State 1 - State 2"),
+                         each = nrow(ests)/2), object@cov_names)
+        rownames(ests) <- nms
+        res$covariates <- ests
+    }
+    if(object@fitted == "multiple_continuous_offdiag_decay" |
+       object@fitted == "multiple_continuous_offdiag_decay_independentRE"){
+        ests <- rbind(get.params(object,FALSE)[3,],
+                      object@sdreport[13,],
+                      get.params(object,FALSE)[4,],
+                      object@sdreport[14,])
+        nms <- paste(rep(c("State 2 - State 1","State 1 - State 2"),
+                         each = 2), c("jump","decay"))
+        rownames(ests) <- nms
+        res$covariates <- ests
+    }
+    if(object@fitted == "multiple_continuous_offdiag_truncated" |
+       object@fitted == "multiple_continuous_offdiag_decay_truncated_independentRE"){
+        ests <- get.params(object,FALSE)[-c(1,2),]
+        nms <- paste(rep(c("State 2 - State 1","State 1 - State 2"),
+                         each = 2), c("during",object@cov_names))
+        rownames(ests) <- nms
+        res$covariates <- ests
+    }
+    return(res)
+})
 
 #' Imports
 #' @importFrom sp SpatialPolygons Polygons proj4string as SpatialPolygonsDataFrame

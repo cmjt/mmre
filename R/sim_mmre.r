@@ -70,7 +70,7 @@ setMethod("sim.mmre.decay",
          c("missing","missing","missing","missing","missing","missing","mmre"),
           function(par.sim , cov, times, ID, start.state, fit){
               random <- "u"%in%names(fit@parameters)
-              sim <- sim.mmre.decay(par.sim = get.params(fit,FALSE),
+              sim <- sim.mmre.decay(par.sim = matrix(get.params(fit,FALSE)[,1],nrow = 2),
                                     cov = fit@data[,fit@cov_names], times = fit@data$time,
                                     ID = as.character(fit@data$ID) , start.state = fit@data$state[1],
                                     random = random)
