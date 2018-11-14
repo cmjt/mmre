@@ -12,3 +12,4 @@ mmre.summary(data)
 \description{
 Funtion to get summary information from a \code{mmre} object
 }
+

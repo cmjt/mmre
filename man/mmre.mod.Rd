@@ -12,3 +12,4 @@ mmre.mod(mmre.data = NULL)
 \description{
 Function that choses C++ template to use for model
 }
+

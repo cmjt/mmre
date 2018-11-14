@@ -12,3 +12,4 @@ ll(fit)
 \description{
 Function to extract the log likelihood from the fitted models
 }
+

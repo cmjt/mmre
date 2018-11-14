@@ -14,3 +14,4 @@ object of exposure start times; \code{End}, end time as a date object of exposur
 \description{
 Function to show duration of exposure data
 }
+

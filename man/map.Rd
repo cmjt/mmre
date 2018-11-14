@@ -3,10 +3,10 @@
 \docType{methods}
 \name{map}
 \alias{map}
-\alias{map,SpatialPolygonsDataFrame,numeric-method}
 \alias{map,SpatialPolygonsDataFrame,SpatialPolygonsDataFrame-method}
-\alias{map,data.frame,numeric-method}
+\alias{map,SpatialPolygonsDataFrame,numeric-method}
 \alias{map,data.frame,data.frame-method}
+\alias{map,data.frame,numeric-method}
 \title{Function to location data
 Method to map a SpatialPolygonsDataFrame onto google maps}
 \usage{
@@ -25,3 +25,4 @@ map(x, zoom)
 Function to location data
 Method to map a SpatialPolygonsDataFrame onto google maps
 }
+

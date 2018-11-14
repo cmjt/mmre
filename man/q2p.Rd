@@ -14,3 +14,4 @@ q2p(q, t)
 \description{
 Function to turn off diagonal 2 state transition matrix elements into a transition probability matrix
 }
+
