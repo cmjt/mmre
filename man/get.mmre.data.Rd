@@ -4,7 +4,8 @@
 \alias{get.mmre.data}
 \title{Function to combine argumets and data into a \code{mmre} object for using \code{fit.mmre}}
 \usage{
-get.mmre.data(data, parameters, cov.names, decay)
+get.mmre.data(data, parameters, cov.names = "none", decay = FALSE,
+  truncation = NULL)
 }
 \arguments{
 \item{data}{a \code{mmre} object}

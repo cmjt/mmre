@@ -4,7 +4,8 @@
 \alias{fit.mmre}
 \title{Function to fit two state Markov model}
 \usage{
-fit.mmre(data = NULL, parameters, cov.names = "none", decay = FALSE)
+fit.mmre(data = NULL, parameters, cov.names = "none", decay = FALSE,
+  truncation = NULL)
 }
 \arguments{
 \item{data}{a \code{mmre} object}
