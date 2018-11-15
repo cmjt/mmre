@@ -141,8 +141,9 @@ mmre.mod <- function(mmre.data = NULL){
 
 #' Function to fit two state Markov model
 #' @inheritParams get.mmre.data
+#' @param trace Logical if TRUE then negative log-likelihood printed out at each optim iteration
 #' @export
-fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE, truncation = NULL){
+fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE, truncation = NULL, trace = FALSE){
     get_mmre <- get.mmre.data(data = data, parameters = parameters, cov.names = cov.names, decay = decay, truncation = truncation)
     mmre_mod <- mmre.mod(get_mmre)
     print(mmre_mod)
@@ -150,13 +151,14 @@ fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE,
     data <- get_mmre@fit_data$response 
     params <- get_mmre@parameters
     obj <- MakeADFun(data, params, DLL = get_mmre@fitted)
-    opt <- optim(obj$par, obj$fn, gr = obj$gr)
+    opt <- optim(obj$par, obj$fn, gr = obj$gr, control = list(trace = trace))
     res <- sdreport(obj)
     get_mmre@fit <- obj
     get_mmre@sdreport <- summary(res)
     return(get_mmre)
 }
-   
+
+
 
 
 
