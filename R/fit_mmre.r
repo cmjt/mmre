@@ -150,7 +150,12 @@ fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE,
     get_mmre@fitted <- mmre_mod
     data <- get_mmre@fit_data$response 
     params <- get_mmre@parameters
-    obj <- MakeADFun(data, params, DLL = get_mmre@fitted)
+    if("u"%in%names(params)){
+        random <- "u"
+    }else{
+        random <- NULL
+    }
+    obj <- MakeADFun(data, params, DLL = get_mmre@fitted, random = random)
     opt <- optim(obj$par, obj$fn, gr = obj$gr, control = list(trace = trace))
     res <- sdreport(obj)
     get_mmre@fit <- obj
