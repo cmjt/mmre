@@ -5,7 +5,7 @@
 \title{Function to fit two state Markov model}
 \usage{
 fit.mmre(data = NULL, parameters, cov.names = "none", decay = FALSE,
-  truncation = NULL)
+  truncation = NULL, trace = FALSE)
 }
 \arguments{
 \item{data}{a \code{mmre} object}
@@ -17,6 +17,8 @@ this list (i.e., to fit a correlated random effect model \code{parameters} must 
 \item{cov.names}{a charater string or vector of covariate names (elements in \code{data}) (only for multiple individuals)}
 
 \item{decay}{logical decay formulation to be used or not}
+
+\item{trace}{Logical if TRUE then negative log-likelihood printed out at each optim iteration}
 }
 \description{
 Function to fit two state Markov model

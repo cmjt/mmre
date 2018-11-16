@@ -161,7 +161,7 @@ setGeneric("ll",
 setMethod("ll",
           c(fit = "mmre"),
           function(fit){
-              pars <- get.params(fit, TRUE)[,1]
+              pars <- get.params(fit, FALSE)[,1]
               nll <- fit@fit$fn(pars)
               -nll
           }
