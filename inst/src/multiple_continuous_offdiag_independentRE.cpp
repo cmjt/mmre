@@ -63,7 +63,8 @@ Type objective_function<Type>::operator() (){
   // Declaring random effects
   PARAMETER_MATRIX(u)
   int wh =  NLEVELS(ID); // number of whales
-  Type ll = 0; //declare log-likelihood
+  // Initialize log-likelihood variable for parallel summation:
+  parallel_accumulator<Type> ll(this);
   matrix<Type> Q(2,2); // declare transition matrix
   //contribution from observed data
   for (int j = 0; j < wh; j++){
@@ -82,11 +83,11 @@ Type objective_function<Type>::operator() (){
       	matrix<Type> Qt = Q*temp;
       	matrix<Type> P = atomic::expm(Qt); // Prob transition matrix
 	Type p = P(x-1,y-1);
-	ll += log(p);
+	ll -= log(p);
       }
-      ll += dnorm(u(j,0), Type(0), Type(1),true); // contribution from 1--2 transition for individual j
-      ll += dnorm(u(j,1), Type(0), Type(1),true); // contribution from 2--1 transition for individual j
+      ll -= dnorm(u(j,0), Type(0), Type(1),true); // contribution from 1--2 transition for individual j
+      ll -= dnorm(u(j,1), Type(0), Type(1),true); // contribution from 2--1 transition for individual j
   }
   ADREPORT(Q);ADREPORT(coef1_2);ADREPORT(coef2_1);// HR and baseline coefs
-  return -ll;
+  return ll;
 }

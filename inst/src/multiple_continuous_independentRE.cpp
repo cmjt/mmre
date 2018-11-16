@@ -44,8 +44,11 @@ Type objective_function<Type>::operator() (){
   vector<Type> q(2); // declare q
   // Declaring random effects
   PARAMETER_MATRIX(u);
+  // random effect log sigma
+  PARAMETER(log_sigma);
+  Type sigma = exp(log_sigma);
   int wh =  NLEVELS(ID); // number of whales
-  Type ll = 0; //declare log-likelihood
+  Type ll(0);
   matrix<Type> Q(2,2); // declare transition matrix
   //contribution from observed data
   for (int j = 0; j < wh; j++){
@@ -62,12 +65,12 @@ Type objective_function<Type>::operator() (){
       	matrix<Type> Qt = Q*temp;
       	matrix<Type> P = atomic::expm(Qt); // Prob transition matrix
 	Type p = P(x-1,y-1);
-	ll += log(p);
+	ll -= log(p);
       }
       // MVN latent variables u for each individual j
-      ll += dnorm(u(j,0), Type(0), Type(1),true); // contribution from 1--2 transition for individual j
-      ll += dnorm(u(j,1), Type(0), Type(1),true); // contribution from 2--1 transition for individual j
+      ll -= dnorm(u(j,0), Type(0), sigma,true); // contribution from 1--2 transition for individual j
+      ll -= dnorm(u(j,1), Type(0), sigma,true); // contribution from 2--1 transition for individual j
   }
-  ADREPORT(Q);
-  return -ll;
+  ADREPORT(Q); ADREPORT(sigma);
+  return ll;
 }
