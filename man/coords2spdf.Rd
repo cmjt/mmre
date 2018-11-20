@@ -14,4 +14,3 @@ coords2spdf(points, name)
 \description{
 Function to make a SpatialPolygonsDataFrame from a matrix of points
 }
-

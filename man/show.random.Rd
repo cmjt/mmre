@@ -12,4 +12,3 @@ show.random(fit)
 \description{
 Function to show the individual normal random effects of fitted model retturned by \code{fit.mmre}
 }
-

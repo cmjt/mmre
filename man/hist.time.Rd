@@ -13,4 +13,3 @@ hist.time(t)
 \description{
 Function to plot a histogram of dates
 }
-
