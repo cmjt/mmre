@@ -60,6 +60,9 @@ Type objective_function<Type>::operator() (){
   Type b2_12 = -exp(betas_matrix(0,1)); Type b2_21 = -exp(betas_matrix(1,1));
   // Declaring random effects
   PARAMETER_MATRIX(u);
+  // random effect log sigma
+  PARAMETER(log_sigma);
+  Type sigma = exp(log_sigma);
   int wh =  NLEVELS(ID); // number of whales
   // Initialize log-likelihood variable for parallel summation:
   parallel_accumulator<Type> ll(this);
@@ -83,9 +86,9 @@ Type objective_function<Type>::operator() (){
       Type p = P(x-1,y-1);
       ll -= log(p);
     }
-    ll -= dnorm(u(j,0), Type(0), Type(1),true); // contribution from 1--2 transition for individual j
-    ll -= dnorm(u(j,1), Type(0), Type(1),true); // contribution from 2--1 transition for individual j
+    ll -= dnorm(u(j,0), Type(0), sigma,true); // contribution from 1--2 transition for individual j
+    ll -= dnorm(u(j,1), Type(0), sigma,true); // contribution from 2--1 transition for individual j
   }
-  ADREPORT(Q); ADREPORT(b1_12); ADREPORT(b1_21); ADREPORT(b2_12); ADREPORT(b2_21);
+  ADREPORT(Q); ADREPORT(b1_12); ADREPORT(b1_21); ADREPORT(b2_12); ADREPORT(b2_21); ADREPORT(sigma);
   return ll;
 }

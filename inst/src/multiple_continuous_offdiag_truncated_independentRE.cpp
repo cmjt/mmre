@@ -5,8 +5,8 @@
 using namespace Eigen;
 using namespace density;
 
-// Templates for fitting a two state Markov model to multiple individuals with a single covariate
-//  Form of each offdiagonal transition matirix is beta0 + beta_1 * exp(beta_2*cov) +
+// Templates for fitting a two state Markov model to multiple individuals for
+// during and time.since (truncated) covariates 
 
 // state_list, time_list, and covariate_list (of length one) are all templates that read a list in from R of
 // states, times, and covariates respectively for
@@ -62,6 +62,9 @@ Type objective_function<Type>::operator() (){
   Type coef2_12 = exp(log_b2_12);Type coef2_21 = exp(log_b2_21);
   // Declaring random effects
   PARAMETER_MATRIX(u);
+  // random effect log sigma
+  PARAMETER(log_sigma);
+  Type sigma = exp(log_sigma);
   int wh =  NLEVELS(ID); // number of whales
   // Initialize log-likelihood variable for parallel summation:
   parallel_accumulator<Type> ll(this);
@@ -94,11 +97,12 @@ Type objective_function<Type>::operator() (){
 	Type p = P(x-1,y-1);
 	ll -= log(p);
       }
-      ll -= dnorm(u(j,0), Type(0), Type(1),true); // contribution from 1--2 transition for individual j
-      ll -= dnorm(u(j,1), Type(0), Type(1),true); // contribution from 2--1 transition for individual j
+      ll -= dnorm(u(j,0), Type(0), sigma,true); // contribution from 1--2 transition for individual j
+      ll -= dnorm(u(j,1), Type(0), sigma,true); // contribution from 2--1 transition for individual j
   }
   ADREPORT(Q);
   ADREPORT(coef1_12); ADREPORT(coef1_21);
   ADREPORT(coef2_12); ADREPORT(coef2_21);
+  ADREPORT(sigma);
   return ll;
 }

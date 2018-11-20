@@ -5,7 +5,7 @@
 using namespace Eigen;
 using namespace density;
 
-// Templates for fitting a two state Markov model to multiple individuals with a single covariate
+// Templates for fitting a two state Markov model to multiple individuals with a multiple covariates
 // on the transition matrix elements state 1 -> 2 and state 2 -> 1 for
 // each individual. 
 
@@ -61,7 +61,10 @@ Type objective_function<Type>::operator() (){
   vector<Type> coef1_2 = exp(log_coef1_2);
   vector<Type> coef2_1 = exp(log_coef2_1);
   // Declaring random effects
-  PARAMETER_MATRIX(u)
+  PARAMETER_MATRIX(u);
+  // random effect log sigma
+  PARAMETER(log_sigma);
+  Type sigma = exp(log_sigma);
   int wh =  NLEVELS(ID); // number of whales
   // Initialize log-likelihood variable for parallel summation:
   parallel_accumulator<Type> ll(this);
@@ -85,9 +88,10 @@ Type objective_function<Type>::operator() (){
 	Type p = P(x-1,y-1);
 	ll -= log(p);
       }
-      ll -= dnorm(u(j,0), Type(0), Type(1),true); // contribution from 1--2 transition for individual j
-      ll -= dnorm(u(j,1), Type(0), Type(1),true); // contribution from 2--1 transition for individual j
+      ll -= dnorm(u(j,0), Type(0), sigma,true); // contribution from 1--2 transition for individual j
+      ll -= dnorm(u(j,1), Type(0), sigma,true); // contribution from 2--1 transition for individual j
   }
   ADREPORT(Q);ADREPORT(coef1_2);ADREPORT(coef2_1);// HR and baseline coefs
+  ADREPORT(sigma);
   return ll;
 }
