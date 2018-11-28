@@ -184,6 +184,7 @@ setMethod("get.probs",
               qs <- fit@sdreport[idx,1]
               res <- q2p(exp(qs),t)
               colnames(res) <- rownames(res) <- c("State 1","State 2")
+              return(res)
           }
           )
 
