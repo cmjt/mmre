@@ -27,3 +27,4 @@ Each column corresponds to the covariates.}
 Function to simulate a two state Markov transition log-linear model
 Number simulated will correspond to length of given times and covariate.
 }
+

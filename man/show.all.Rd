@@ -16,3 +16,4 @@ show.all(x, range)
 Function to plot all animal tracks in one dataset along with the associated spatial ploygon range. Colours of tracks are created to
 be as distinct as possible.
 }
+

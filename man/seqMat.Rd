@@ -15,3 +15,4 @@ a matrix with transition probabilities
 \description{
 calculates a sequence matrix from consecutive TRUE/FALSE vector
 }
+

@@ -23,3 +23,4 @@ this list (i.e., to fit a correlated random effect model \code{parameters} must 
 \description{
 Function to fit two state Markov model
 }
+

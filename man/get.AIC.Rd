@@ -12,3 +12,4 @@ get.AIC(fit)
 \description{
 Function to calculate AIC of mmre fitted model
 }
+

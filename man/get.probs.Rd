@@ -14,3 +14,4 @@ get.probs(fit, t)
 \description{
 Function to get the transition propabilities from a fitted model
 }
+

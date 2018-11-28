@@ -29,3 +29,4 @@ Function to simulate Matrkov transition model where transition intensities are
 given by beta0 + beta1*exp(beta2*cov) + individual.random.effect
 Number simulated will correspond to length of given times and covariates.
 }
+

@@ -21,3 +21,4 @@ this list (i.e., to fit a correlated random effect model \code{parameters} must 
 \description{
 Function to combine argumets and data into a \code{mmre} object for using \code{fit.mmre}
 }
+

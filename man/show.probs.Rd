@@ -14,3 +14,4 @@ show.probs(fit, time)
 \description{
 Function to plot the (off diagonal) transition probabilties over a specified time period
 }
+

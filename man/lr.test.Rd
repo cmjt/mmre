@@ -16,3 +16,4 @@ lr.test(fit.full, fit.alt)
 Function to do a likelihood ratio test between two models, null hypothesis
 that there is no affect of alternative model \code{fit.alt}.
 }
+
