@@ -64,8 +64,7 @@ Type objective_function<Type>::operator() (){
   PARAMETER(log_sigma);
   Type sigma = exp(log_sigma);
   int wh =  NLEVELS(ID); // number of whales
-  // Initialize log-likelihood variable for parallel summation:
-  parallel_accumulator<Type> ll(this);
+  Type ll = 0; //declare log-likelihood
   matrix<Type> Q(2,2); // declare transition matrix
   //contribution from observed data
   for (int j = 0; j < wh; j++){
