@@ -271,10 +271,10 @@ setMethod("get.coefs",signature(object = "mmre"),function(object){
     }
     if(object@fitted == "multiple_continuous_offdiag_decay" |
        object@fitted == "multiple_continuous_offdiag_decay_independentRE"){
-        ests <- rbind(get.params(object,FALSE)[3,],
-                      -exp(get.params(object,FALSE)[5,]),
-                      get.params(object,FALSE)[4,],
-                      -exp(get.params(object,FALSE)[6,]))
+        ests <- rbind(object@sdreport["b1_12",],
+                      object@sdreport["b2_12",],
+                      object@sdreport["b1_21",],
+                      object@sdreport["b2_21",])
         nms <- paste(rep(c("State 1 - State 2","State 2 - State 1"),
                          each = 2), c("jump","decay"))
         rownames(ests) <- nms
