@@ -20,4 +20,3 @@ This function is based on code found in the book Applied Spaatial Data
 Analysis with R, 2nd edition, Roger S. Bivand, Edzer J. Pebesma and V. Gomez-Rubio
 UseR! Series, Springer New York (section 2.6 pp 41)
 }
-

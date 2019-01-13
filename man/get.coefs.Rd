@@ -9,4 +9,3 @@ get.coefs(object)
 \description{
 Coefficient method for mmre model
 }
-
