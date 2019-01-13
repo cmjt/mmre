@@ -150,12 +150,13 @@ setMethod("show.random",
               n <- length(idx)/2
               us <- fit@sdreport[idx,]
               ran <- c(floor(range(us[,1])[1]),ceiling(range(us[,1])[2]))
-              plot(us[1:n,1],pch = 20, type = "b",ylab = "",xlab = "",xaxt = "n",
-                   ylim = ran,main = "Individual random effects")
-              lines(us[(n+1):(2*n),1],col = "grey")
-              points(us[(n+1):(2*n),1],pch = 20,col = "grey")
+              plot(us[1:n,1],pch = 20, type = "p",ylab = "",xlab = "",xaxt = "n",
+                   ylim = ran,main = "Individual random effects",cex = 2)
+              lines(us[1:n,1],col = "black",cex = 2)
+              lines(us[(n+1):(2*n),1],col = "grey",cex = 2)
+              points(us[(n+1):(2*n),1],pch = 20,col = "grey",cex = 2)
               legend("topright",col = c("black","grey"),pch = 20,lty = 1,
-                     legend = c("q 1->2","q 2->1"),bty = "n")
+                     legend = c("transition 1->2","transition 2->1"),bty = "n",cex = 2)
               axis(1,at = 1:n,labels = as.factor(fit@summary$IDs),cex.axis = 0.7)
               abline(h=0,lwd = 2,lty = 2)
           }
