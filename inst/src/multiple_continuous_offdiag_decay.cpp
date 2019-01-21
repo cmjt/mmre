@@ -68,7 +68,6 @@ Type objective_function<Type>::operator() (){
     vector<Type> covs = covariates(j); //covariates
     int t = tem.size();
       for (int i = 0; i < (t-1); i++){
-	// MVN latent variables u for each individual j
 	q(0) = exp(log_baseline(0) + logb1_12*exp(b2_12*covs(i)));
 	q(1) = exp(log_baseline(1) + logb1_21*exp(b2_21*covs(i)));
 	Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
