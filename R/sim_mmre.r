@@ -37,15 +37,15 @@ setMethod("sim.mmre.decay",
                       if(random){
                           ## off diag q s1 to s2
                           q_1.2 <- exp(par.sim[1,1] +
-                                       par.sim[1,2]*exp(-exp(par.sim[1,3])*c) + mvn[i,1])
+                                       -exp(par.sim[1,2])*exp(-exp(par.sim[1,3])*c) + mvn[i,1])
                           ## off diag q s2 to s1
                           q_2.1 <-  exp(par.sim[2,1] +
-                                        par.sim[2,2]*exp(-exp(par.sim[2,3])*c) + mvn[i,2])
+                                        exp(par.sim[2,2])*exp(-exp(par.sim[2,3])*c) + mvn[i,2])
                       }else{
                           ## off diag q s1 to s2
-                          q_1.2 <- exp(par.sim[1,1] + par.sim[1,2]*exp(-exp(par.sim[1,3])*c) )
+                          q_1.2 <- exp(par.sim[1,1] + -exp(par.sim[1,2])*exp(-exp(par.sim[1,3])*c) )
                           ## off diag q s2 to s1
-                          q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2]*exp(-exp(par.sim[2,3])*c) )
+                          q_2.1 <-  exp(par.sim[2,1] + exp(par.sim[2,2])*exp(-exp(par.sim[2,3])*c) )
                       }
                       ## Q matrix
                       Q <- matrix(c(-q_1.2,q_1.2,q_2.1,-q_2.1),nrow = 2,byrow = TRUE)
