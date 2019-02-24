@@ -1,8 +1,8 @@
 #' Function to simulate Matrkov transition model where transition intensities are
-#' given by beta0 + beta1*exp(beta2*cov) + individual.random.effect
+#' given by beta0 + beta1*exp(-beta2*cov) + individual.random.effect
 #' Number simulated will correspond to length of given times and covariates.
-#' @param par.sim a 2 by three matrix of parameters. Each row coresponds to the off diagonal transition intensities.
-#' Each column corresponds to the covariates.
+#' @param par.sim a 2 by 3 matrix of parameters. Each row coresponds to the off diagonal transition intensities.
+#' Eah column corresponds to each of the three parameters beta0, beta1, and beta2.
 #' @param times numeric vector of observed times
 #' @param ID a character vector of whale Ids for zero meaned mvn independent random effects
 #' @param start.state numeric initial state (can only be 1 or 2)
@@ -37,15 +37,15 @@ setMethod("sim.mmre.decay",
                       if(random){
                           ## off diag q s1 to s2
                           q_1.2 <- exp(par.sim[1,1] +
-                                       -exp(par.sim[1,2])*exp(-exp(par.sim[1,3])*c) + mvn[i,1])
+                                       par.sim[1,2]*exp(-exp(par.sim[1,3])*c) + mvn[i,1])
                           ## off diag q s2 to s1
                           q_2.1 <-  exp(par.sim[2,1] +
-                                        exp(par.sim[2,2])*exp(-exp(par.sim[2,3])*c) + mvn[i,2])
+                                        par.sim[2,2]*exp(-exp(par.sim[2,3])*c) + mvn[i,2])
                       }else{
                           ## off diag q s1 to s2
-                          q_1.2 <- exp(par.sim[1,1] + -exp(par.sim[1,2])*exp(-exp(par.sim[1,3])*c) )
+                          q_1.2 <- exp(par.sim[1,1] + par.sim[1,2]*exp(-par.sim[1,3]*c))
                           ## off diag q s2 to s1
-                          q_2.1 <-  exp(par.sim[2,1] + exp(par.sim[2,2])*exp(-exp(par.sim[2,3])*c) )
+                          q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2]*exp(-par.sim[2,3]*c))
                       }
                       ## Q matrix
                       Q <- matrix(c(-q_1.2,q_1.2,q_2.1,-q_2.1),nrow = 2,byrow = TRUE)
