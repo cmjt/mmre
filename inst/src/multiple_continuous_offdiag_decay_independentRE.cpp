@@ -53,10 +53,10 @@ Type objective_function<Type>::operator() (){
   DATA_STRUCT(covariates, covariate_list); //an array covriate vectors for each whale
   vector<Type> q(2); // declare q
   PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition baselines
-  vector<Type> baseline = exp(log_baseline); // declare intercept
   PARAMETER_MATRIX(betas_matrix); // coefficients for the intensity jump and exp decay
-  Type logb1_12 = betas_matrix(0,0); Type logb1_21 = betas_matrix(1,0);
-  Type b1_12 = -exp(logb1_12); Type b1_21 = exp(logb1_21);
+  // b1_12 forced to be -ve and b1_21 +e
+  Type b1_12 = -exp(betas_matrix(0,0)); Type b1_21 = exp(betas_matrix(1,0));
+  // both b_2s forced to be -ve
   Type b2_12 = -exp(betas_matrix(0,1)); Type b2_21 = -exp(betas_matrix(1,1));
   // Declaring random effects
   PARAMETER_MATRIX(u);
@@ -74,9 +74,14 @@ Type objective_function<Type>::operator() (){
     int t = tem.size();
     for (int i = 0; i < (t-1); i++){
       // MVN latent variables u for each individual j
-      q(0) = exp(log_baseline(0) + b1_12*exp(b2_12*covs(i)) + u(j,0));
-      q(1) = exp(log_baseline(1) + b1_21*exp(b2_21*covs(i)) + u(j,1));
-      Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
+      if(covs(i) == 0){
+	q(0) = exp(log_baseline(0) + b1_12 + u(j,0));
+	q(1) = exp(log_baseline(1) + b1_21 + u(j,1));
+      }else{
+	q(0) = exp(log_baseline(0) + exp(b2_12*covs(i)) + u(j,0));
+	q(1) = exp(log_baseline(1) + exp(b2_21*covs(i)) + u(j,1));
+      }
+	Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
       Type temp = tem(i+1) - tem(i);
       int x = CppAD::Integer(sem(i));
       int y = CppAD::Integer(sem(i+1));

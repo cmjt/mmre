@@ -23,7 +23,7 @@ setMethod("sim.mmre.decay",
               if(random){
                   mvn <- mvtnorm::rmvnorm(n,mean = rep(0,2), sigma = diag(rep(1,2)))
                   ## zero mean mvn with fixed sd
-                  }
+              }
               states <- list()
               for(i in 1:n){
                   tms <- times[ID==ids[i]]
@@ -35,17 +35,31 @@ setMethod("sim.mmre.decay",
                       t <- tms[j] - tms[j-1]
                       c <- covs[j]
                       if(random){
-                          ## off diag q s1 to s2
-                          q_1.2 <- exp(par.sim[1,1] +
-                                       par.sim[1,2]*exp(-exp(par.sim[1,3])*c) + mvn[i,1])
-                          ## off diag q s2 to s1
-                          q_2.1 <-  exp(par.sim[2,1] +
-                                        par.sim[2,2]*exp(-exp(par.sim[2,3])*c) + mvn[i,2])
+                          if(c == 0){
+                              ## off diag q s1 to s2
+                              q_1.2 <- exp(par.sim[1,1] + par.sim[1,2] + mvn[i,1])
+                              ## off diag q s2 to s1
+                              q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2] + mvn[i,2])
+                          }else{
+                              ## off diag q s1 to s2
+                              q_1.2 <- exp(par.sim[1,1] +
+                                           exp(-par.sim[1,3]*c) + mvn[i,1])
+                              ## off diag q s2 to s1
+                              q_2.1 <-  exp(par.sim[2,1] +
+                                            exp(-par.sim[2,3]*c) + mvn[i,2])
+                          }
                       }else{
-                          ## off diag q s1 to s2
-                          q_1.2 <- exp(par.sim[1,1] + par.sim[1,2]*exp(-par.sim[1,3]*c))
-                          ## off diag q s2 to s1
-                          q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2]*exp(-par.sim[2,3]*c))
+                          if(c == 0){
+                              ## off diag q s1 to s2
+                              q_1.2 <- exp(par.sim[1,1] + par.sim[1,2])
+                              ## off diag q s2 to s1
+                              q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2])
+                          }else{
+                              ## off diag q s1 to s2
+                              q_1.2 <- exp(par.sim[1,1] + exp(-par.sim[1,3]*c))
+                              ## off diag q s2 to s1
+                              q_2.1 <-  exp(par.sim[2,1] + exp(-par.sim[2,3]*c))
+                          }
                       }
                       ## Q matrix
                       Q <- matrix(c(-q_1.2,q_1.2,q_2.1,-q_2.1),nrow = 2,byrow = TRUE)
@@ -63,7 +77,7 @@ setMethod("sim.mmre.decay",
               }else{
                   return(list(sim = res))
               }
-              
+
           }
           )
 setMethod("sim.mmre.decay",
