@@ -55,9 +55,9 @@ Type objective_function<Type>::operator() (){
   PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition baselines
   PARAMETER_MATRIX(betas_matrix); // coefficients for the intensity jump and exp decay
   // b1_12 forced to be -ve and b1_21 +e
-  Type b1_12 = -exp(betas_matrix(0,0)); Type b1_21 = exp(betas_matrix(1,0));
+  Type b1_12 = exp(betas_matrix(0,0)); Type b1_21 = exp(betas_matrix(1,0));
   // both b_2s forced to be -ve
-  Type b2_12 = -exp(betas_matrix(0,1)); Type b2_21 = -exp(betas_matrix(1,1));
+  Type b2_12 = exp(betas_matrix(0,1)); Type b2_21 = exp(betas_matrix(1,1));
   // Declaring random effects
   PARAMETER_MATRIX(u);
   // random effect log sigma
@@ -75,11 +75,11 @@ Type objective_function<Type>::operator() (){
     for (int i = 0; i < (t-1); i++){
       // MVN latent variables u for each individual j
       if(covs(i) == 0){
-	q(0) = exp(log_baseline(0) + b1_12 + u(j,0));
+	q(0) = exp(log_baseline(0) - b1_12 + u(j,0));
 	q(1) = exp(log_baseline(1) + b1_21 + u(j,1));
       }else{
-	q(0) = exp(log_baseline(0) + exp(b2_12*covs(i)) + u(j,0));
-	q(1) = exp(log_baseline(1) + exp(b2_21*covs(i)) + u(j,1));
+	q(0) = exp(log_baseline(0) + exp(-b2_12*covs(i)) + u(j,0));
+	q(1) = exp(log_baseline(1) + exp(-b2_21*covs(i)) + u(j,1));
       }
 	Q(0,0) = - q(0); Q(0,1) = q(0); Q(1,0) = q(1); Q(1,1) = -q(1); 
       Type temp = tem(i+1) - tem(i);
