@@ -54,9 +54,9 @@ Type objective_function<Type>::operator() (){
   vector<Type> q(2); // declare q
   PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition baselines
   PARAMETER_MATRIX(betas_matrix); // coefficients for the intensity jump and exp decay
-  // b1_12 forced to be -ve and b1_21 +e
+  // b1_12 forced to be -ve and b1_21 +ve (see below)
   Type b1_12 = exp(betas_matrix(0,0)); Type b1_21 = exp(betas_matrix(1,0));
-  // both b_2s forced to be -ve
+  // both b_2s forced to be -ve (see below)
   Type b2_12 = exp(betas_matrix(0,1)); Type b2_21 = exp(betas_matrix(1,1));
   // Declaring random effects
   PARAMETER_MATRIX(u);
