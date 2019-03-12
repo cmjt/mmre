@@ -8,8 +8,8 @@ Number simulated will correspond to length of given times and covariate.}
 sim.mmre.trunc(par.sim, cov, times, ID, start.state, random, trunc, fit)
 }
 \arguments{
-\item{par.sim}{a 2 by three matrix of parameters. Each row coresponds to the off diagonal transition intensities.
-Each column corresponds to the covariates.}
+\item{par.sim}{a 2 by 3 matrix of parameters. Each row coresponds to the off diagonal transition intensities.
+Eah column corresponds to each of the three parameters beta0, beta1, and beta2.}
 
 \item{cov}{a vector of covariate values (i.e., days since exposure)}
 

@@ -3,14 +3,14 @@
 \name{sim.mmre.decay}
 \alias{sim.mmre.decay}
 \title{Function to simulate Matrkov transition model where transition intensities are
-given by beta0 + beta1*exp(beta2*cov) + individual.random.effect
+given by beta0 + beta1*exp(-beta2*cov) + individual.random.effect
 Number simulated will correspond to length of given times and covariates.}
 \usage{
 sim.mmre.decay(par.sim, cov, times, ID, start.state, random, fit)
 }
 \arguments{
-\item{par.sim}{a 2 by three matrix of parameters. Each row coresponds to the off diagonal transition intensities.
-Each column corresponds to the covariates.}
+\item{par.sim}{a 2 by 3 matrix of parameters. Each row coresponds to the off diagonal transition intensities.
+Eah column corresponds to each of the three parameters beta0, beta1, and beta2.}
 
 \item{cov}{a vector of covariate values (i.e., days since exposure)}
 
@@ -26,6 +26,6 @@ Each column corresponds to the covariates.}
 }
 \description{
 Function to simulate Matrkov transition model where transition intensities are
-given by beta0 + beta1*exp(beta2*cov) + individual.random.effect
+given by beta0 + beta1*exp(-beta2*cov) + individual.random.effect
 Number simulated will correspond to length of given times and covariates.
 }
