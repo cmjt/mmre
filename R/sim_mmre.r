@@ -35,31 +35,15 @@ setMethod("sim.mmre.decay",
                       t <- tms[j] - tms[j-1]
                       c <- covs[j]
                       if(random){
-                          if(c == 0){
-                              ## off diag q s1 to s2
-                              q_1.2 <- exp(par.sim[1,1] + par.sim[1,2] + mvn[i,1])
-                              ## off diag q s2 to s1
-                              q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2] + mvn[i,2])
-                          }else{
-                              ## off diag q s1 to s2
-                              q_1.2 <- exp(par.sim[1,1] +
-                                           exp(-par.sim[1,3]*c) + mvn[i,1])
-                              ## off diag q s2 to s1
-                              q_2.1 <-  exp(par.sim[2,1] +
-                                            exp(-par.sim[2,3]*c) + mvn[i,2])
-                          }
+                          ## off diag q s1 to s2
+                          q_1.2 <- exp(par.sim[1,1] + par.sim[1,2]*exp(-par.sim[1,3]*c) + mvn[i,1])
+                          ## off diag q s2 to s1
+                          q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2]*exp(-par.sim[2,3]*c) + mvn[i,2])
                       }else{
-                          if(c == 0){
-                              ## off diag q s1 to s2
-                              q_1.2 <- exp(par.sim[1,1] + par.sim[1,2])
-                              ## off diag q s2 to s1
-                              q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2])
-                          }else{
-                              ## off diag q s1 to s2
-                              q_1.2 <- exp(par.sim[1,1] + exp(-par.sim[1,3]*c))
-                              ## off diag q s2 to s1
-                              q_2.1 <-  exp(par.sim[2,1] + exp(-par.sim[2,3]*c))
-                          }
+                          ## off diag q s1 to s2
+                          q_1.2 <- exp(par.sim[1,1] + par.sim[1,2]*exp(-par.sim[1,3]*c))
+                          ## off diag q s2 to s1
+                          q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2]*exp(-par.sim[2,3]*c)) 
                       }
                       ## Q matrix
                       Q <- matrix(c(-q_1.2,q_1.2,q_2.1,-q_2.1),nrow = 2,byrow = TRUE)
