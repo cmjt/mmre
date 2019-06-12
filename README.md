@@ -1,16 +1,9 @@
 
-```
-## Loading required package: TMB
-```
-
-```
-## Loading required package: Rcpp
-```
 
 ## Overiew
 
 `R` package to fit two-stare continuous-time discrete-space Markov models with individual level random effects. 
-Methodology was developed with [Enrico Pirotta](pirotta.enrico@gmail.com) to assess the effects of exposure 
+Methodology was developed with [Enrico Pirotta](mailto:pirotta.enrico@gmail.com) to assess the effects of exposure 
 to Navy sonar on marine mammal movement patterns.
 
 ## Installation
@@ -42,10 +35,10 @@ once in each workspace.
 ## Example
 
 The `mmre` package contains an example dataset of estimated latitude and longitude locations 
-of two individuals on the AUTEC Naval range. The states indicate if an individual was off 
-(state = 1) or on (state = 2) range.
+of three individuals on the AUTEC Naval range (see figure below). The states indicate if an individual was off 
+(state = 1) or on (state = 2) range (black polygon in figure).
 
-<img src="/figure/AUTEC.png" title="Estimated tracks on and around the AUTEC Naval range" alt="Estimated tracks on and around the AUTEC Naval range" width="30%" style="display: block; margin: auto;" />
+<img src="/figure/AUTEC.png" title="Estimated tracks on and around the AUTEC Naval range" alt="Estimated tracks on and around the AUTEC Naval range" width="50%" style="display: block; margin: auto;" />
 
 
 
@@ -106,5 +99,5 @@ get.probs(mod.basic.re,1)
 show.random(mod.basic.re)
 ```
 
-<img src="figure/unnamed-chunk-12-1.png" title="Individual level random effects" alt="Individual level random effects" width="30%" />
+<img src="figure/unnamed-chunk-12-1.png" title="Individual level random effects" alt="Individual level random effects" width="50%" />
 

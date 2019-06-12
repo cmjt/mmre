@@ -1,4 +1,4 @@
-```{r, echo = FALSE,results = "hide"}
+```{r, echo = FALSE,results = "hide",message = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = ">",
@@ -10,7 +10,7 @@ library(mmre)
 ## Overiew
 
 `R` package to fit two-stare continuous-time discrete-space Markov models with individual level random effects. 
-Methodology was developed with [Enrico Pirotta](pirotta.enrico@gmail.com) to assess the effects of exposure 
+Methodology was developed with [Enrico Pirotta](mailto:pirotta.enrico@gmail.com) to assess the effects of exposure 
 to Navy sonar on marine mammal movement patterns.
 
 ## Installation
@@ -39,10 +39,10 @@ once in each workspace.
 ## Example
 
 The `mmre` package contains an example dataset of estimated latitude and longitude locations 
-of two individuals on the AUTEC Naval range. The states indicate if an individual was off 
-(state = 1) or on (state = 2) range.
+of three individuals on the AUTEC Naval range (see figure below). The states indicate if an individual was off 
+(state = 1) or on (state = 2) range (black polygon in figure).
 
-```{r, fig.cap = "Estimated tracks on and around the AUTEC Naval range", out.width = '30%',fig.align = "center",echo = FALSE}
+```{r, fig.cap = "Estimated tracks on and around the AUTEC Naval range", out.width = '50%',fig.align = "center",echo = FALSE}
 knitr::include_graphics("/figure/AUTEC.png")
 ```
 
@@ -85,7 +85,7 @@ mod.basic.re <- fit.mmre(data = data,parameters = pars)
 get.probs(mod.basic.re,1)
 ```
 
-```{r,  fig.height = 5, fig.width = 10,out.width = "30%",fig.cap = "Individual level random effects"}
+```{r,  fig.height = 5, fig.width = 10,out.width = "50%",fig.cap = "Individual level random effects"}
 show.random(mod.basic.re)
 ```
 
