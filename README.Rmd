@@ -1,10 +1,11 @@
-
-```
-## Loading required package: TMB
-```
-
-```
-## Loading required package: Rcpp
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = ">",
+  fig.path = "figure/",
+  fig.height = 1
+)
+library(mmre)
 ```
 
 ## Overiew
@@ -17,23 +18,20 @@ to Navy sonar on marine mammal movement patterns.
 
 To install the `mmre` package run
 
-
-```r
+```{r, eval = FALSE}
 devtools::install_github("cmjt/mmre")
 library(mmre)
 ```
 
 All model likelihoods are coded using `TMB`; in oder to compile all `TMB` templates after installation run
 
-
-```r
+```{r, eval = FALSE}
 compile.mmre()
 ```
 
 and to load the templates run 
 
-
-```r
+```{r}
 dll.mmre()
 ```
 
@@ -47,45 +45,34 @@ of two individuals on the AUTEC Naval range. The states indicate if an individua
 
 ![]("figure/AUTEC.png")
 
-
-```r
+```{r}
 data(example)
 data <- example
 ```
 To fit a simple two state continuous-time Markov model run
 
-
-```r
+```{r, results = "hide"}
 mod.basic <- fit.mmre(data = data,parameters = list(log_baseline = log(c(0.5,0.5))))
 ```
 
 and to get the estimated transition probability matrix P(t = 1)
 
-
-```r
+```{r}
 get.probs(mod.basic,1)
->           State 1    State 2
-> State 1 0.9326097 0.06739027
-> State 2 0.4195685 0.58043148
 ```
 
 To campare the results to the `msm` package run
 
-
-```r
+```{r}
 library(msm)
 msm.fit <- msm(state ~ time, subject = ID, data = data, qmatrix = rbind(c(0, 0.5), c(0.5, 0)),  
     exacttimes = FALSE)
 pmatrix.msm(msm.fit)
->           State 1    State 2
-> State 1 0.9325607 0.06743932
-> State 2 0.4194816 0.58051835
 ```
 
 ### Model with individual random effects
 
-
-```r
+```{r, results = "hide"}
 qs <- as.numeric(get.params(mod.basic,FALSE)[,1])
 pars <- list(log_baseline = qs,u = matrix(numeric(2*length(table(data$ID))),
       ncol = 2),log_sigma = 0)
@@ -93,9 +80,7 @@ mod.basic.re <- fit.mmre(data = data,parameters = pars)
 get.probs(mod.basic.re,1)
 ```
 
-
-```r
+```{r,  out.width = '100%'}
 show.random(mod.basic.re)
-> Error in plot.new(): figure margins too large
 ```
 
