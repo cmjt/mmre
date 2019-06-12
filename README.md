@@ -45,7 +45,13 @@ The `mmre` package contains an example dataset of estimated latitude and longitu
 of two individuals on the AUTEC Naval range. The states indicate if an individual was off 
 (state = 1) or on (state = 2) range.
 
-![]("figure/AUTEC.png")
+
+```r
+knitr::include_graphics("/figure/AUTEC.png")
+```
+
+<img src="/figure/AUTEC.png" title="Estimated tracks on and around the AUTEC Naval range" alt="Estimated tracks on and around the AUTEC Naval range" width="100%" />
+
 
 
 ```r
@@ -69,7 +75,7 @@ get.probs(mod.basic,1)
 > State 2 0.4195685 0.58043148
 ```
 
-To campare the results to the `msm` package run
+To compare the results to the `msm` package run
 
 
 ```r
@@ -90,12 +96,20 @@ qs <- as.numeric(get.params(mod.basic,FALSE)[,1])
 pars <- list(log_baseline = qs,u = matrix(numeric(2*length(table(data$ID))),
       ncol = 2),log_sigma = 0)
 mod.basic.re <- fit.mmre(data = data,parameters = pars)
+```
+
+
+```r
 get.probs(mod.basic.re,1)
+>           State 1    State 2
+> State 1 0.9333624 0.06663765
+> State 2 0.5536407 0.44635932
 ```
 
 
 ```r
 show.random(mod.basic.re)
-> Error in plot.new(): figure margins too large
 ```
+
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
 

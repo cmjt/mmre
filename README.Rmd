@@ -2,7 +2,6 @@
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = ">",
-  fig.path = "figure/",
   fig.height = 1
 )
 library(mmre)
@@ -43,7 +42,10 @@ The `mmre` package contains an example dataset of estimated latitude and longitu
 of two individuals on the AUTEC Naval range. The states indicate if an individual was off 
 (state = 1) or on (state = 2) range.
 
-![]("figure/AUTEC.png")
+```{r, fig.cap = "Estimated tracks on and around the AUTEC Naval range", out.width = '100%'}
+knitr::include_graphics("/figure/AUTEC.png")
+```
+
 
 ```{r}
 data(example)
@@ -61,7 +63,7 @@ and to get the estimated transition probability matrix P(t = 1)
 get.probs(mod.basic,1)
 ```
 
-To campare the results to the `msm` package run
+To compare the results to the `msm` package run
 
 ```{r}
 library(msm)
@@ -77,10 +79,13 @@ qs <- as.numeric(get.params(mod.basic,FALSE)[,1])
 pars <- list(log_baseline = qs,u = matrix(numeric(2*length(table(data$ID))),
       ncol = 2),log_sigma = 0)
 mod.basic.re <- fit.mmre(data = data,parameters = pars)
+```
+
+```{r}
 get.probs(mod.basic.re,1)
 ```
 
-```{r,  out.width = '100%'}
+```{r,  fig.height = 100, fig.width = 100}
 show.random(mod.basic.re)
 ```
 
