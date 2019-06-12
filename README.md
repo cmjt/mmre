@@ -45,12 +45,7 @@ The `mmre` package contains an example dataset of estimated latitude and longitu
 of two individuals on the AUTEC Naval range. The states indicate if an individual was off 
 (state = 1) or on (state = 2) range.
 
-
-```r
-knitr::include_graphics("/figure/AUTEC.png")
-```
-
-<img src="/figure/AUTEC.png" title="Estimated tracks on and around the AUTEC Naval range" alt="Estimated tracks on and around the AUTEC Naval range" width="100%" />
+<img src="/figure/AUTEC.png" title="Estimated tracks on and around the AUTEC Naval range" alt="Estimated tracks on and around the AUTEC Naval range" width="30%" style="display: block; margin: auto;" />
 
 
 
@@ -88,7 +83,7 @@ pmatrix.msm(msm.fit)
 > State 2 0.4194816 0.58051835
 ```
 
-### Model with individual random effects
+### Model with individual level random effects
 
 
 ```r
@@ -111,5 +106,5 @@ get.probs(mod.basic.re,1)
 show.random(mod.basic.re)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
+<img src="figure/unnamed-chunk-12-1.png" title="Individual level random effects" alt="Individual level random effects" width="30%" />
 

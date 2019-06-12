@@ -1,4 +1,4 @@
-```{r, echo = FALSE}
+```{r, echo = FALSE,results = "hide"}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = ">",
@@ -42,7 +42,7 @@ The `mmre` package contains an example dataset of estimated latitude and longitu
 of two individuals on the AUTEC Naval range. The states indicate if an individual was off 
 (state = 1) or on (state = 2) range.
 
-```{r, fig.cap = "Estimated tracks on and around the AUTEC Naval range", out.width = '100%'}
+```{r, fig.cap = "Estimated tracks on and around the AUTEC Naval range", out.width = '30%',fig.align = "center",echo = FALSE}
 knitr::include_graphics("/figure/AUTEC.png")
 ```
 
@@ -72,7 +72,7 @@ msm.fit <- msm(state ~ time, subject = ID, data = data, qmatrix = rbind(c(0, 0.5
 pmatrix.msm(msm.fit)
 ```
 
-### Model with individual random effects
+### Model with individual level random effects
 
 ```{r, results = "hide"}
 qs <- as.numeric(get.params(mod.basic,FALSE)[,1])
@@ -85,7 +85,7 @@ mod.basic.re <- fit.mmre(data = data,parameters = pars)
 get.probs(mod.basic.re,1)
 ```
 
-```{r,  fig.height = 100, fig.width = 100}
+```{r,  fig.height = 5, fig.width = 10,out.width = "30%",fig.cap = "Individual level random effects"}
 show.random(mod.basic.re)
 ```
 
