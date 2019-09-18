@@ -40,28 +40,28 @@ setGeneric("sl2sp",
            })
 setMethod("sl2sp",
           c(x = "SpatialLinesDataFrame"),
-            function(x) {
-                lns <- slot(x,"lines")
-                if(sum(table(sapply(lns,function(y)length(slot(y,"Lines")))))> 1) {
-                    i <- sapply(lns,function(y) {
-                        crds <- slot(slot(y,"Lines")[[1]],"coords")
-                        identical(crds[1,],crds[nrow(crds),])
-                    })
-                    i2 <- x[i]
-                    list_of_Lines <- slot(i2,"lines")
-                    sp <- SpatialPolygons(lapply(list_of_Lines, function(y) {
-                        Polygons(list(Polygon(slot(slot(y,"Lines")[[1]],
-                                                   "coords"))),ID = slot(y,"ID"))
-                    }), proj4string = CRS(proj4string(x)))
-                }else{
-                    sp <- SpatialPolygons(lapply(lns, function(y) {
-                        Polygons(list(Polygon(slot(slot(y,"Lines")[[1]],
-                                                   "coords"))),ID = slot(y,"ID"))
-                    }), proj4string = CRS(proj4string(x)))
-                }
-                spdf <- as(sp, "SpatialPolygonsDataFrame")
-                return(spdf)
-            })
+          function(x) {
+              lns <- slot(x,"lines")
+              if(sum(table(sapply(lns,function(y)length(slot(y,"Lines")))))> 1) {
+                  i <- sapply(lns,function(y) {
+                      crds <- slot(slot(y,"Lines")[[1]],"coords")
+                      identical(crds[1,],crds[nrow(crds),])
+                  })
+                  i2 <- x[i]
+                  list_of_Lines <- slot(i2,"lines")
+                  sp <- sp::SpatialPolygons(lapply(list_of_Lines, function(y) {
+                      sp::Polygons(list(Polygon(slot(slot(y,"Lines")[[1]],
+                                                     "coords"))),ID = slot(y,"ID"))
+                  }), proj4string = CRS(proj4string(x)))
+              }else{
+                  sp <- sp::SpatialPolygons(lapply(lns, function(y) {
+                      sp::Polygons(list(Polygon(slot(slot(y,"Lines")[[1]],
+                                                     "coords"))),ID = slot(y,"ID"))
+                  }), proj4string = CRS(proj4string(x)))
+              }
+              spdf <- as(sp, "SpatialPolygonsDataFrame")
+              return(spdf)
+          })
 #' Function to make a SpatialPolygonsDataFrame from a matrix of points
 #' @param points a 2 column matrix of points. The last point should be equal to the first
 #' @param name a character name for the SPDF
@@ -74,9 +74,9 @@ setGeneric("coords2spdf",
 setMethod("coords2spdf",
           c(points = "matrix", name = "character"),
           function(points,name){
-              p <- Polygon(points)
-              polys <- SpatialPolygons(list(
-                  Polygons(list(p), name)))
+              p <- sp::Polygon(points)
+              polys <- sp::SpatialPolygons(list(
+                               sp::Polygons(list(p), name)))
               res <- as(polys, "SpatialPolygonsDataFrame")
               return(res)
           }
@@ -92,13 +92,13 @@ setGeneric("seqMat",
 setMethod("seqMat",
           c(x = "logical"),
           function(x){
-               TT <- length(which(x[1:(length(x)-1)]=="TRUE"&x[2:(length(x))]=="TRUE"))
-               TF <- length(which(x[1:(length(x)-1)]=="TRUE"&x[2:(length(x))]=="FALSE"))
-               FF <- length(which(x[1:(length(x)-1)]=="FALSE"&x[2:(length(x))]=="FALSE"))
-               FT <- length(which(x[1:(length(x)-1)]=="FALSE"&x[2:(length(x))]=="TRUE"))
-               mat <- matrix(c(FF,FT,TF,TT),ncol = 2,byrow = TRUE)
-               colnames(mat) <- rownames(mat) <- c("FALSE","TRUE")
-               return(prop.table(mat,margin = 1))
+              TT <- length(which(x[1:(length(x)-1)]=="TRUE"&x[2:(length(x))]=="TRUE"))
+              TF <- length(which(x[1:(length(x)-1)]=="TRUE"&x[2:(length(x))]=="FALSE"))
+              FF <- length(which(x[1:(length(x)-1)]=="FALSE"&x[2:(length(x))]=="FALSE"))
+              FT <- length(which(x[1:(length(x)-1)]=="FALSE"&x[2:(length(x))]=="TRUE"))
+              mat <- matrix(c(FF,FT,TF,TT),ncol = 2,byrow = TRUE)
+              colnames(mat) <- rownames(mat) <- c("FALSE","TRUE")
+              return(prop.table(mat,margin = 1))
           }
           )
 #' Function to turn off diagonal 2 state transition matrix elements into a transition probability matrix
@@ -143,12 +143,12 @@ setGeneric("trans.matrix",
 setMethod("trans.matrix",
           c(x = "matrix", prob = "logical"),
           function(x, prob){
-               tt <- table( c(x[,-ncol(x)]), c(x[,-1]) )
-               if(prob) tt <- tt / rowSums(tt)
-               res <- matrix(tt,ncol = ncol(tt),byrow = FALSE)
-               rownames(res) <- attributes(tt)$dimnames[[1]]
-               colnames(res) <- attributes(tt)$dimnames[[2]]
-               return(res)
+              tt <- table( c(x[,-ncol(x)]), c(x[,-1]) )
+              if(prob) tt <- tt / rowSums(tt)
+              res <- matrix(tt,ncol = ncol(tt),byrow = FALSE)
+              rownames(res) <- attributes(tt)$dimnames[[1]]
+              colnames(res) <- attributes(tt)$dimnames[[2]]
+              return(res)
           }
           )
 #' Function to extract the log likelihood from the fitted models
@@ -238,16 +238,16 @@ setGeneric("lr.test",
            }
            )
 setMethod("lr.test",
-         c(fit.full = "mmre", fit.alt = "mmre"),
-         function(fit.full, fit.alt){
-             lrts <- 2*(ll(fit.full) - ll(fit.alt))
-             k.full <- length(fit.full@fit$par)
-             k.alt <- length(fit.alt@fit$par)
-             k <- k.full - k.alt
-             pval <- 1 - pchisq(lrts,k)
-             cat(paste("H0: no altervnative effect. Pvalue = ",pval),"\n")
-         }
-         )
+          c(fit.full = "mmre", fit.alt = "mmre"),
+          function(fit.full, fit.alt){
+              lrts <- 2*(ll(fit.full) - ll(fit.alt))
+              k.full <- length(fit.full@fit$par)
+              k.alt <- length(fit.alt@fit$par)
+              k <- k.full - k.alt
+              pval <- 1 - pchisq(lrts,k)
+              cat(paste("H0: no altervnative effect. Pvalue = ",pval),"\n")
+          }
+          )
 #' Coefficient method for mmre model
 #' @export
 setGeneric("get.coefs",

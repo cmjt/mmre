@@ -139,11 +139,11 @@ mmre.mod <- function(mmre.data = NULL){
     return(mod_chosen)
 }
 
-#' Function to fit two state Markov model
+#' Function to fit two state Markov model with individual level random effects.
 #' @inheritParams get.mmre.data
-#' @param trace Logical if TRUE then negative log-likelihood printed out at each optim iteration
+#' @param ... other arguments for nlminb
 #' @export
-fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE, truncation = NULL, trace = FALSE){
+fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE, truncation = NULL,...){
     get_mmre <- get.mmre.data(data = data, parameters = parameters, cov.names = cov.names, decay = decay, truncation = truncation)
     mmre_mod <- mmre.mod(get_mmre)
     print(mmre_mod)
@@ -156,7 +156,7 @@ fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE,
         random <- NULL
     }
     obj <- MakeADFun(data, params, DLL = get_mmre@fitted, random = random)
-    opt <- optim(obj$par, obj$fn, gr = obj$gr, control = list(trace = trace))
+    opt <- nlminb(obj$par, obj$fn, gr = obj$gr, ...)
     res <- sdreport(obj)
     get_mmre@fit <- obj
     get_mmre@sdreport <- summary(res)
