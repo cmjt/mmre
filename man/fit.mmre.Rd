@@ -2,10 +2,10 @@
 % Please edit documentation in R/fit_mmre.r
 \name{fit.mmre}
 \alias{fit.mmre}
-\title{Function to fit two state Markov model}
+\title{Function to fit two state Markov model with individual level random effects.}
 \usage{
 fit.mmre(data = NULL, parameters, cov.names = "none", decay = FALSE,
-  truncation = NULL, trace = FALSE)
+  truncation = NULL, optim = TRUE, ...)
 }
 \arguments{
 \item{data}{a \code{mmre} object}
@@ -18,8 +18,10 @@ this list (i.e., to fit a correlated random effect model \code{parameters} must 
 
 \item{decay}{logical decay formulation to be used or not}
 
-\item{trace}{Logical if TRUE then negative log-likelihood printed out at each optim iteration}
+\item{optim}{logical; if TURE \code{optim()} else optimisation done using \code{nlminb()}}
+
+\item{...}{other arguments for \code{nlminb()} or \code{optim()}}
 }
 \description{
-Function to fit two state Markov model
+Function to fit two state Markov model with individual level random effects.
 }

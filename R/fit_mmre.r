@@ -141,9 +141,10 @@ mmre.mod <- function(mmre.data = NULL){
 
 #' Function to fit two state Markov model with individual level random effects.
 #' @inheritParams get.mmre.data
-#' @param ... other arguments for nlminb
+#' @param optim logical; if TURE \code{optim()} else optimisation done using \code{nlminb()}
+#' @param ... other arguments for \code{nlminb()} or \code{optim()}
 #' @export
-fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE, truncation = NULL,...){
+fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE, truncation = NULL, optim  = TRUE, ...){
     get_mmre <- get.mmre.data(data = data, parameters = parameters, cov.names = cov.names, decay = decay, truncation = truncation)
     mmre_mod <- mmre.mod(get_mmre)
     print(mmre_mod)
@@ -156,7 +157,11 @@ fit.mmre <- function(data = NULL, parameters, cov.names = "none", decay = FALSE,
         random <- NULL
     }
     obj <- MakeADFun(data, params, DLL = get_mmre@fitted, random = random)
-    opt <- nlminb(obj$par, obj$fn, gr = obj$gr, ...)
+    if(optim){
+        opt <- optim(obj$par, obj$fn, gr = obj$gr, ...)
+    }else{
+        opt <- nlminb(obj$par, obj$fn, gr = obj$gr, ...)
+    }
     res <- sdreport(obj)
     get_mmre@fit <- obj
     get_mmre@sdreport <- summary(res)
