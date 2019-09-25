@@ -1,8 +1,9 @@
 #' Function to simulate Matrkov transition model where transition intensities are
 #' given by beta0 + beta1*exp(-beta2*cov) + individual.random.effect
 #' Number simulated will correspond to length of given times and covariates.
-#' @param par.sim a 2 by 3 matrix of parameters. Each row coresponds to the off diagonal transition intensities.
-#' Eah column corresponds to each of the three parameters beta0, beta1, and beta2.
+#' @param par.sim a named list of parameters. Must contain "log_baseline","jump", and "decay" all vectors of length two corresponding
+#' to parameters of the off diagonal transition rates. If data being simulated from a random model then must contain element
+#' "sig" the  standard deviation of the bivariate normal individual level random effect.
 #' @param times numeric vector of observed times
 #' @param ID a character vector of whale Ids for zero meaned mvn independent random effects
 #' @param start.state numeric initial state (can only be 1 or 2)
@@ -16,12 +17,12 @@ setGeneric("sim.mmre.decay",
            })
 
 setMethod("sim.mmre.decay",
-          c("matrix","numeric","numeric","character", "numeric","logical","missing"),
+          c("list","numeric","numeric","character", "numeric","logical","missing"),
           function(par.sim , cov, times, ID, start.state, random, fit){
               n <- length(table(ID))
               ids <- names(table(ID))
               if(random){
-                  mvn <- mvtnorm::rmvnorm(n,mean = rep(0,2), sigma = diag(rep(1,2)))
+                  mvn <- mvtnorm::rmvnorm(n,mean = rep(0,2), sigma = diag(rep(par.sim[["sig"]]^2,2)))
                   ## zero mean mvn with fixed sd
               }
               states <- list()
@@ -36,14 +37,14 @@ setMethod("sim.mmre.decay",
                       c <- covs[j]
                       if(random){
                           ## off diag q s1 to s2
-                          q_1.2 <- exp(par.sim[1,1] + par.sim[1,2]*exp(-par.sim[1,3]*c) + mvn[i,1])
+                          q_1.2 <- exp(par.sim[["log_baseline"]][1] + par.sim[["jump"]][1]*exp(-par.sim[["decay"]][1]*c) + mvn[i,1])
                           ## off diag q s2 to s1
-                          q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2]*exp(-par.sim[2,3]*c) + mvn[i,2])
+                          q_2.1 <- exp(par.sim[["log_baseline"]][2] + par.sim[["jump"]][2]*exp(-par.sim[["decay"]][2]*c) + mvn[i,2])
                       }else{
                           ## off diag q s1 to s2
-                          q_1.2 <- exp(par.sim[1,1] + par.sim[1,2]*exp(-par.sim[1,3]*c))
+                          q_1.2 <- exp(par.sim[["log_baseline"]][1] + par.sim[["jump"]][1]*exp(-par.sim[["decay"]][1]*c))
                           ## off diag q s2 to s1
-                          q_2.1 <-  exp(par.sim[2,1] + par.sim[2,2]*exp(-par.sim[2,3]*c)) 
+                          q_2.1 <-  exp(par.sim[["log_baseline"]][2] + par.sim[["jump"]][2]*exp(-par.sim[["decay"]][2]*c)) 
                       }
                       ## Q matrix
                       Q <- matrix(c(-q_1.2,q_1.2,q_2.1,-q_2.1),nrow = 2,byrow = TRUE)
@@ -66,15 +67,19 @@ setMethod("sim.mmre.decay",
           )
 setMethod("sim.mmre.decay",
          c("missing","missing","missing","missing","missing","missing","mmre"),
-          function(par.sim , cov, times, ID, start.state, fit){
-              random <- "u"%in%names(fit@parameters)
-              sim <- sim.mmre.decay(par.sim = matrix(get.params(fit,FALSE)[,1],nrow = 2),
-                                    cov = fit@data[,fit@cov_names], times = fit@data$time,
-                                    ID = as.character(fit@data$ID) , start.state = fit@data$state[1],
-                                    random = random)
-              return(sim)
-          }
-          )
+         function(par.sim , cov, times, ID, start.state, fit){
+             par.sim <- list(log_baseline =  get.params(fit,FALSE)[1:2,1])
+             par.sim$jump <- get.coefs(fit)$covariates[c(1,3),1]
+             par.sim$decay <- get.coefs(fit)$covariates[c(2,4),1]
+             random <- "u"%in%names(fit@parameters)
+             if(random){par.sim$sig <- exp(get.params(fit,FALSE)["log_sigma",1])}
+             sim <- sim.mmre.decay(par.sim = par.sim,
+                                   cov = fit@data[,fit@cov_names], times = fit@data$time,
+                                   ID = as.character(fit@data$ID) , start.state = fit@data$state[1],
+                                   random = random)
+             return(sim)
+         }
+         )
 #' Function to simulate a two state Markov transition log-linear model
 #' Number simulated will correspond to length of given times and covariate.
 #' @inheritParams sim.mmre.decay
