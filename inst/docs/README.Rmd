@@ -38,9 +38,8 @@ once in each workspace.
 
 ## Example
 
-The `mmre` package contains an example dataset of estimated latitude and longitude locations 
-of three individuals on the AUTEC Naval range (see figure below). The states indicate if an individual was off 
-(state = 1) or on (state = 2) range (black polygon in figure).
+The `mmre` package contains an example dataset, `example$data`, of three individuals on the AUTEC Naval range (see figure below). 
+The `state` variable indicate if an individual was off (state = 1) or on (state = 2) range (black polygon in figure). `Id` is the individual ID (individual\_i for i = 1,2,3). The `time` column gives the relative times os the observations in days and the `t.since` column gives, in days, the time since an individual was esposed to Navy sonar activity.
 
 ```{r, fig.cap = "Estimated tracks on and around the AUTEC Naval range", out.width = '50%',fig.align = "center",echo = FALSE}
 knitr::include_graphics("/figure/AUTEC.png")
@@ -49,12 +48,12 @@ knitr::include_graphics("/figure/AUTEC.png")
 
 ```{r}
 data(example)
-data <- example
+data <- example$data
 ```
 To fit a simple two state continuous-time Markov model run
 
 ```{r, results = "hide"}
-mod.basic <- fit.mmre(data = data,parameters = list(log_baseline = log(c(0.5,0.5))))
+mod.basic <- fit.mmre(data = example$data,parameters = list(log_baseline = log(c(0.5,0.5))))
 ```
 
 and to get the estimated transition probability matrix P(t = 1)
@@ -65,7 +64,7 @@ get.probs(mod.basic,1)
 
 To compare the results to the `msm` package run
 
-```{r}
+```{r, eval = FALSE}
 library(msm)
 msm.fit <- msm(state ~ time, subject = ID, data = data, qmatrix = rbind(c(0, 0.5), c(0.5, 0)),  
     exacttimes = FALSE)
@@ -75,10 +74,7 @@ pmatrix.msm(msm.fit)
 ### Model with individual level random effects
 
 ```{r, results = "hide"}
-qs <- as.numeric(get.params(mod.basic,FALSE)[,1])
-pars <- list(log_baseline = qs,u = matrix(numeric(2*length(table(data$ID))),
-      ncol = 2),log_sigma = 0)
-mod.basic.re <- fit.mmre(data = data,parameters = pars)
+mod.basic.re <- fit.mmre(data = example$data,parameters = example$parameters.basic.re)
 ```
 
 ```{r}
