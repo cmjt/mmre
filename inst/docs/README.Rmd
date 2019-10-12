@@ -1,3 +1,10 @@
+---
+title: 
+author: 
+date: 
+output: md_document
+---
+
 ```{r, echo = FALSE,results = "hide",message = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -42,13 +49,12 @@ The `mmre` package contains an example dataset, `example$data`, of three individ
 The `state` variable indicate if an individual was off (state = 1) or on (state = 2) range (black polygon in figure). `Id` is the individual ID (individual\_i for i = 1,2,3). The `time` column gives the relative times os the observations in days and the `t.since` column gives, in days, the time since an individual was esposed to Navy sonar activity.
 
 ```{r, fig.cap = "Estimated tracks on and around the AUTEC Naval range", out.width = '50%',fig.align = "center",echo = FALSE}
-knitr::include_graphics("/figure/AUTEC.png")
+knitr::include_graphics("figure/AUTEC.png")
 ```
 
 
 ```{r}
 data(example)
-data <- example$data
 ```
 To fit a simple two state continuous-time Markov model run
 
@@ -73,15 +79,21 @@ pmatrix.msm(msm.fit)
 
 ### Model with individual level random effects
 
-```{r, results = "hide"}
+```{r, results = "hide", eval = TRUE}
 mod.basic.re <- fit.mmre(data = example$data,parameters = example$parameters.basic.re)
 ```
 
-```{r}
+```{r, eval = TRUE}
 get.probs(mod.basic.re,1)
 ```
+### Model with exponential decay effect of covariate and individual level random effects
 
-```{r,  fig.height = 5, fig.width = 10,out.width = "50%",fig.cap = "Individual level random effects"}
-show.random(mod.basic.re)
+```{r, results = "hide", eval = TRUE}
+mod.decay.re <- fit.mmre(data = example$data,parameters = example$parameters.decay.re, decay = TRUE, cov.names = "t.since")
 ```
+
+```{r, eval = TRUE}
+get.coefs(mod.decay.re)
+```
+
 
