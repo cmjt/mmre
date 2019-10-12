@@ -57,9 +57,12 @@ and to get the estimated transition probability matrix P(t = 1)
 To compare the results to the `msm` package run
 
     library(msm)
-    msm.fit <- msm(state ~ time, subject = ID, data = data, qmatrix = rbind(c(0, 0.5), c(0.5, 0)),  
+    msm.fit <- msm(state ~ time, subject = ID, data = example$data, qmatrix = rbind(c(0, 0.5), c(0.5, 0)),  
         exacttimes = FALSE)
     pmatrix.msm(msm.fit)
+    >           State 1   State 2
+    > State 1 0.7910251 0.2089749
+    > State 2 0.6358203 0.3641797
 
 ### Model with individual level random effects
 
