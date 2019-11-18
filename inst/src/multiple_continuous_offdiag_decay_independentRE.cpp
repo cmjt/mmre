@@ -1,9 +1,12 @@
 #include <TMB.hpp>
 #include <cppad/cppad.hpp>
 #include <Eigen/Dense>
+#include <RcppArmadilloExtensions/sample.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 
 using namespace Eigen;
 using namespace density;
+using namespace Rcpp;
 
 // Templates for fitting a two state Markov model to multiple individuals with decay formulation and re
 // Form of each offdiagonal transition matirix is beta0 + beta_1 * exp(beta_2*cov) + re
@@ -51,6 +54,7 @@ Type objective_function<Type>::operator() (){
   DATA_STRUCT(states, state_list); //an array of numeric states (i.e., in whale example 1s and 2s) for each whale
   DATA_STRUCT(times, time_list); //an array of times for each whale
   DATA_STRUCT(covariates, covariate_list); //an array covriate vectors for each whale
+  DATA_VECTOR_INDICATOR(keep,states); //
   vector<Type> q(2); // declare q
   PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition baselines
   PARAMETER_MATRIX(betas_matrix); // coefficients for the intensity jump and exp decay
@@ -83,9 +87,22 @@ Type objective_function<Type>::operator() (){
       matrix<Type> P = atomic::expm(Qt); // Prob transition matrix
       Type p = P(x-1,y-1);
       ll -= log(p);
+      SIMULATE{
+	sem(i) = RcppArmadillo::sample(vector choices[2] = {x,y}, int size = 1, true, p);
+      }
     }
     ll -= dnorm(u(j,0), Type(0), sigma,true); // contribution from 1--2 transition for individual j
+    SIMULATE{
+      u(j,0) = rnorm(Type(0),sigma);
+    }
     ll -= dnorm(u(j,1), Type(0), sigma,true); // contribution from 2--1 transition for individual j
+    SIMULATE{
+      u(j,1) = rnorm(Type(0),sigma);
+    }
+  }
+  SIMULATE{
+    REPORT(u);
+    REPORT(p);
   }
   ADREPORT(Q); ADREPORT(b1_12); ADREPORT(b1_21); ADREPORT(b2_12); ADREPORT(b2_21); ADREPORT(sigma);
   return ll;
