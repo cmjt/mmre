@@ -52,7 +52,6 @@ Type objective_function<Type>::operator() (){
   DATA_STRUCT(states, state_list); //an array of numeric states (i.e., in whale example 1s and 2s) for each whale
   DATA_STRUCT(times, time_list); //an array of times for each whale
   DATA_STRUCT(covariates, covariate_list); //an array covriate vectors for each whale
-  //DATA_VECTOR_INDICATOR(keep,states); //
   vector<Type> q(2); // declare q
   PARAMETER_VECTOR(log_baseline);//a vector of the log off diagonal transition baselines
   PARAMETER_MATRIX(betas_matrix); // coefficients for the intensity jump and exp decay
@@ -85,14 +84,14 @@ Type objective_function<Type>::operator() (){
       matrix<Type> P = atomic::expm(Qt); // Prob transition matrix
       Type p = P(x-1,y-1);
       ll -= log(p);
+      std::cout << p << "\n";
       SIMULATE{
       	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::array<double,2> init = {0.4,0.6};
+	std::array<double,2> init = {0.5,0.5};
 	std::discrete_distribution <> d(init.begin(),init.end());;
 	Type n = d(gen);
-	std::cout << n << "\n";
-	sem(i) = n;
+	states(j)(i) = n + 1;
       }
     }
     ll -= dnorm(u(j,0), Type(0), sigma,true); // contribution from 1--2 transition for individual j
