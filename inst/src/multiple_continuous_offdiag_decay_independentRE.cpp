@@ -46,6 +46,7 @@ struct covariate_list : vector<vector <Type> > {
   }
 };
 
+
 template<class Type>
 Type objective_function<Type>::operator() (){
   DATA_FACTOR(ID);
@@ -83,13 +84,15 @@ Type objective_function<Type>::operator() (){
       matrix<Type> Qt = Q*temp;
       matrix<Type> P = atomic::expm(Qt); // Prob transition matrix
       Type p = P(x-1,y-1);
+      double c = asDouble(p);
       ll -= log(p);
-      std::cout << p << "\n";
       SIMULATE{
       	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::array<double,2> init = {0.5,0.5};
-	std::discrete_distribution <> d(init.begin(),init.end());;
+	std::array<double,2> init;
+	if(x == 1) init = {c,1-c};
+	if(x == 2) init = {1-c,c};
+	std::discrete_distribution <> d(init.begin(),init.end());
 	Type n = d(gen);
 	states(j)(i) = n + 1;
       }
