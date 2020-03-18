@@ -36,16 +36,30 @@ template<class Type>
 Type objective_function<Type>::operator() (){
   DATA_FACTOR(ID);
   DATA_STRUCT(states, state_list); //an array of numeric states (i.e., in whale example 1s and 2s) for each whale
-  DATA_STRUCT(times, time_list); //an array of times for each whale
-  PARAMETER_MATRIX(Q); // Q matrix (diagonal entries will be ignored)
-  int nstates = Q.row(0).size(); // number of states
+  DATA_STRUCT(times, time_list); //an array of times for each individual
+  DATA_INTEGER(nstates); // number of states
+  PARAMETER_ARRAY(qarray); // Q matrix (diagonal entries will be ignored)
+  matrix<Type> Q(nstates,nstates); // make Q
   for (int k = 0; k < nstates; k++){
-    Q(k,k) = 0;
+    // upper diag
+    for(int l = 1; l < nstates; l++){
+      if(k < l){
+	Type val = qarray(l-1,0,k);
+    	Q(k,l) = val;
+      }
+    }
+    // lower diag
+    for(int l = 0; l < (nstates - 1); l++){
+      if(k > l){
+    	Type val = qarray(l,0,k);
+    	Q(k,l) = val;
+      }
+    }
+    // diagonal
     Type sum = Q.row(k).sum();
     Q(k,k) = -sum;
   }
-  std::cout << Q << "\n";
-  int wh =  NLEVELS(ID); // number of whales
+  int wh =  NLEVELS(ID); // number of individuals
   vector<Type> ll(wh);
   //contribution from observed data
   for (int j = 0; j < wh; j++){
@@ -62,6 +76,6 @@ Type objective_function<Type>::operator() (){
 	ll(j) += log(p);
       }
   }
-  ADREPORT(Q);
+  //ADREPORT(Q);
   return -sum(ll);
 }
