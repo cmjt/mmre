@@ -13,9 +13,10 @@ Depends:
     TMB,
     Rcpp (>= 0.11.5),
 Suggests:
-    testthat,
+    testthat (>= 3.0.0),
     spatstat,
     maptools,
     mvtnorm,
     expm
 RoxygenNote: 6.1.1
+Config/testthat/edition: 3
