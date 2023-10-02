@@ -4,8 +4,15 @@
 \alias{fit.mmre}
 \title{Function to fit two state Markov model with individual level random effects.}
 \usage{
-fit.mmre(data = NULL, parameters, cov.names = "none", decay = FALSE,
-  truncation = NULL, optim = TRUE, ...)
+fit.mmre(
+  data = NULL,
+  parameters,
+  cov.names = "none",
+  decay = FALSE,
+  truncation = NULL,
+  optim = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{a \code{mmre} object}

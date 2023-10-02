@@ -77,17 +77,10 @@ get.mmre.data <- function(data, parameters, cov.names = "none",decay = FALSE, tr
     obj@cov_names <- cov.names
     obj@decay <- decay
     n <- obj@summary$Number
-    if(n > 1) {
-        states <- split(obj@data$state,obj@data$ID)
-        times <- split(obj@data$time,obj@data$ID)
-        ID <- as.factor(levels(obj@data$ID))
-        obj@fit_data$response <- list(ID = ID,states = states, times = times)
-        
-    }else{
-        states <- obj@data$state
-        times <- obj@data$time
-        obj@fit_data$response <- list(states = states, times = times)
-    }
+    states <- split(obj@data$state,obj@data$ID)
+    times <- split(obj@data$time,obj@data$ID)
+    ID <- as.factor(levels(obj@data$ID))
+    obj@fit_data$response <- list(ID = ID,states = states, times = times)
     if(!("none"%in%obj@cov_names)){
         covs <- cbind(obj@data[cov.names])
         if(n > 1) {

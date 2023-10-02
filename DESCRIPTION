@@ -18,5 +18,5 @@ Suggests:
     maptools,
     mvtnorm,
     expm
-RoxygenNote: 6.1.1
+RoxygenNote: 7.2.3
 Config/testthat/edition: 3
